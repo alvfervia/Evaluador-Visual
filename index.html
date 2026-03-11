@@ -13,7 +13,6 @@
     --surface2: #1e1e21;
     --border: #2a2a2e;
     --accent: #e8ff47;
-    --accent2: #ff6b35;
     --text: #f0efe8;
     --muted: #6b6b72;
     --real-color: #4ade80;
@@ -30,7 +29,6 @@
     overflow-x: hidden;
   }
 
-  /* NOISE OVERLAY */
   body::before {
     content: '';
     position: fixed;
@@ -41,175 +39,105 @@
     opacity: 0.4;
   }
 
-  /* ── INTRO SCREEN ── */
   #intro {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 2rem;
-    text-align: center;
-    animation: fadeIn .6s ease;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 100vh;
+    padding: 2rem; text-align: center; animation: fadeIn .6s ease;
   }
 
   .intro-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: .7rem;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    padding: .35rem .9rem;
-    border-radius: 2rem;
-    margin-bottom: 2rem;
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    letter-spacing: .2em; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--accent);
+    padding: .35rem .9rem; border-radius: 2rem; margin-bottom: 2rem;
   }
 
   #intro h1 {
-    font-size: clamp(2.2rem, 6vw, 4.5rem);
-    font-weight: 800;
-    line-height: 1.05;
-    max-width: 700px;
-    margin-bottom: 1.2rem;
+    font-size: clamp(2.2rem, 6vw, 4.5rem); font-weight: 800;
+    line-height: 1.05; max-width: 700px; margin-bottom: 1.2rem;
   }
 
   #intro h1 span { color: var(--accent); }
 
   #intro p {
-    color: var(--muted);
-    max-width: 500px;
-    line-height: 1.7;
-    font-size: .95rem;
-    margin-bottom: 2.5rem;
+    color: var(--muted); max-width: 500px; line-height: 1.7;
+    font-size: .95rem; margin-bottom: 2.5rem;
   }
 
-  .intro-fields {
-    display: flex;
-    flex-direction: column;
-    gap: .8rem;
-    width: 100%;
-    max-width: 360px;
-    margin-bottom: 2rem;
+  .intro-fields { width: 100%; max-width: 360px; margin-bottom: 2rem; }
+
+  .intro-fields input {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); padding: .85rem 1.1rem; border-radius: .5rem;
+    font-family: 'Syne', sans-serif; font-size: .9rem; outline: none;
+    transition: border-color .2s; width: 100%;
   }
 
-  .intro-fields input, .intro-fields select {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: .85rem 1.1rem;
-    border-radius: .5rem;
-    font-family: 'Syne', sans-serif;
-    font-size: .9rem;
-    outline: none;
-    transition: border-color .2s;
-    width: 100%;
-  }
-
-  .intro-fields input:focus, .intro-fields select:focus {
-    border-color: var(--accent);
-  }
-
-  .intro-fields select option { background: var(--surface2); }
+  .intro-fields input:focus { border-color: var(--accent); }
 
   .btn-start {
-    background: var(--accent);
-    color: #0e0e0f;
-    border: none;
-    padding: 1rem 2.5rem;
-    border-radius: .5rem;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    letter-spacing: .05em;
+    background: var(--accent); color: #0e0e0f; border: none;
+    padding: 1rem 2.5rem; border-radius: .5rem;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+    cursor: pointer; letter-spacing: .05em;
     transition: transform .15s, box-shadow .15s;
   }
 
-  .btn-start:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(232,255,71,.25);
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
+
+  #loading {
+    display: none; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 100vh;
+    padding: 2rem; text-align: center; animation: fadeIn .4s ease;
   }
 
-  /* ── SURVEY SCREEN ── */
-  #survey { display: none; padding: 0; animation: fadeIn .4s ease; }
+  #loading h2 { font-size: 2.2rem; font-weight: 800; margin: 1.5rem 0 .75rem; }
+  #loading h2 span { color: var(--accent); }
+  #loading p { color: var(--muted); max-width: 380px; line-height: 1.7; font-size: .95rem; margin-bottom: 2rem; }
+
+  .load-bar-wrap {
+    width: 100%; max-width: 400px; background: var(--border);
+    border-radius: 4px; height: 6px; overflow: hidden; margin-bottom: .75rem;
+  }
+
+  #load-fill { height: 100%; background: var(--accent); border-radius: 4px; width: 0%; transition: width .2s ease; }
+  #load-label { font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--muted); }
+
+  #survey { display: none; animation: fadeIn .4s ease; }
 
   .survey-header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: rgba(14,14,15,.92);
-    backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(14,14,15,.92); backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    padding: 1rem 2rem; display: flex;
+    align-items: center; justify-content: space-between; gap: 1rem;
   }
 
-  .survey-logo {
-    font-weight: 800;
-    font-size: 1rem;
-    letter-spacing: -.01em;
-  }
-
+  .survey-logo { font-weight: 800; font-size: 1rem; }
   .survey-logo span { color: var(--accent); }
 
-  .progress-wrap {
-    flex: 1;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: .3rem;
-  }
+  .progress-wrap { flex: 1; max-width: 400px; display: flex; flex-direction: column; gap: .3rem; }
 
   .progress-label {
-    font-family: 'DM Mono', monospace;
-    font-size: .7rem;
-    color: var(--muted);
-    display: flex;
-    justify-content: space-between;
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    color: var(--muted); display: flex; justify-content: space-between;
   }
 
-  .progress-bar {
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
 
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 2px;
-    transition: width .4s ease;
-    width: 0%;
-  }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .4s ease; width: 0%; }
 
   .counter-pill {
-    font-family: 'DM Mono', monospace;
-    font-size: .75rem;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    padding: .3rem .75rem;
-    border-radius: 2rem;
-    white-space: nowrap;
+    font-family: 'DM Mono', monospace; font-size: .75rem;
+    background: var(--surface2); border: 1px solid var(--border);
+    padding: .3rem .75rem; border-radius: 2rem; white-space: nowrap;
   }
 
-  /* ── CARD ── */
-  .card-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 2.5rem 1.5rem 4rem;
-  }
+  .card-wrap { display: flex; justify-content: center; padding: 2.5rem 1.5rem 4rem; }
 
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    overflow: hidden;
-    width: 100%;
-    max-width: 620px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 1rem; overflow: hidden; width: 100%; max-width: 620px;
     animation: slideUp .35s ease;
   }
 
@@ -219,330 +147,159 @@
   }
 
   .img-container {
-    width: 100%;
-    aspect-ratio: 4/3;
-    background: var(--surface2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
+    width: 100%; aspect-ratio: 4/3; background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
   }
 
-  .img-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-  }
+  .img-container img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
   .img-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .75rem;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    font-size: .75rem;
+    display: flex; flex-direction: column; align-items: center;
+    gap: .75rem; color: var(--muted);
+    font-family: 'DM Mono', monospace; font-size: .75rem;
   }
 
   .img-placeholder svg { opacity: .3; }
 
   .img-label {
-    position: absolute;
-    top: .75rem;
-    left: .75rem;
-    font-family: 'DM Mono', monospace;
-    font-size: .65rem;
-    letter-spacing: .1em;
-    background: rgba(14,14,15,.8);
-    border: 1px solid var(--border);
-    padding: .25rem .6rem;
-    border-radius: .3rem;
-    color: var(--muted);
+    position: absolute; top: .75rem; left: .75rem;
+    font-family: 'DM Mono', monospace; font-size: .65rem; letter-spacing: .1em;
+    background: rgba(14,14,15,.8); border: 1px solid var(--border);
+    padding: .25rem .6rem; border-radius: .3rem; color: var(--muted);
   }
 
   .card-body { padding: 1.75rem; display: flex; flex-direction: column; gap: 1.5rem; }
 
-  /* ── TYPE TOGGLE ── */
   .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: .65rem;
-    letter-spacing: .15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: .75rem;
+    font-family: 'DM Mono', monospace; font-size: .65rem;
+    letter-spacing: .15em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: .75rem;
   }
 
-  .type-toggle {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: .5rem;
-  }
+  .type-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
 
   .type-btn {
-    padding: .85rem;
-    border-radius: .5rem;
-    border: 1.5px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    font-size: .9rem;
-    cursor: pointer;
-    transition: all .2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .5rem;
+    padding: .85rem; border-radius: .5rem; border: 1.5px solid var(--border);
+    background: transparent; color: var(--muted);
+    font-family: 'Syne', sans-serif; font-weight: 600; font-size: .9rem;
+    cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; justify-content: center; gap: .5rem;
   }
 
   .type-btn:hover { border-color: var(--text); color: var(--text); }
+  .type-btn.selected-real { border-color: var(--real-color); background: rgba(74,222,128,.08); color: var(--real-color); }
+  .type-btn.selected-recon { border-color: var(--recon-color); background: rgba(248,113,113,.08); color: var(--recon-color); }
 
-  .type-btn.selected-real {
-    border-color: var(--real-color);
-    background: rgba(74,222,128,.08);
-    color: var(--real-color);
-  }
-
-  .type-btn.selected-recon {
-    border-color: var(--recon-color);
-    background: rgba(248,113,113,.08);
-    color: var(--recon-color);
-  }
-
-  /* ── LIKERT ── */
   .likert-group { display: flex; flex-direction: column; gap: 1.1rem; }
-
   .likert-row { display: flex; flex-direction: column; gap: .5rem; }
 
-  .likert-title {
-    font-size: .88rem;
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .likert-title { font-size: .88rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+  .likert-val { font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--accent); min-width: 1.5rem; text-align: right; }
 
-  .likert-val {
-    font-family: 'DM Mono', monospace;
-    font-size: .75rem;
-    color: var(--accent);
-    min-width: 1.5rem;
-    text-align: right;
-  }
-
-  .likert-scale {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: .3rem;
-  }
-
-  .likert-scale label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .3rem;
-    cursor: pointer;
-  }
-
+  .likert-scale { display: grid; grid-template-columns: repeat(7, 1fr); gap: .3rem; }
+  .likert-scale label { display: flex; flex-direction: column; align-items: center; gap: .3rem; cursor: pointer; }
   .likert-scale input[type="radio"] { display: none; }
 
   .likert-dot {
-    width: 100%;
-    aspect-ratio: 1;
-    max-width: 44px;
-    border-radius: .3rem;
-    border: 1.5px solid var(--border);
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Mono', monospace;
-    font-size: .75rem;
-    color: var(--muted);
-    transition: all .15s;
-    cursor: pointer;
+    width: 100%; aspect-ratio: 1; max-width: 44px; border-radius: .3rem;
+    border: 1.5px solid var(--border); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-size: .75rem;
+    color: var(--muted); transition: all .15s; cursor: pointer;
   }
 
-  .likert-scale label:hover .likert-dot {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
+  .likert-scale label:hover .likert-dot { border-color: var(--accent); color: var(--accent); }
+  .likert-scale input[type="radio"]:checked + .likert-dot { background: var(--accent); border-color: var(--accent); color: #0e0e0f; font-weight: 700; }
 
-  .likert-scale input[type="radio"]:checked + .likert-dot {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #0e0e0f;
-    font-weight: 700;
-  }
+  .likert-ends { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--muted); padding: 0 .1rem; }
 
-  .likert-ends {
-    display: flex;
-    justify-content: space-between;
-    font-family: 'DM Mono', monospace;
-    font-size: .6rem;
-    color: var(--muted);
-    padding: 0 .1rem;
-  }
-
-  /* ── NEXT BTN ── */
   .btn-next {
-    background: var(--accent);
-    color: #0e0e0f;
-    border: none;
-    padding: .95rem;
-    border-radius: .5rem;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: .95rem;
-    cursor: pointer;
-    width: 100%;
-    transition: transform .15s, box-shadow .15s, opacity .2s;
-    letter-spacing: .04em;
+    background: var(--accent); color: #0e0e0f; border: none; padding: .95rem;
+    border-radius: .5rem; font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: .95rem; cursor: pointer; width: 100%;
+    transition: transform .15s, box-shadow .15s, opacity .2s; letter-spacing: .04em;
   }
 
-  .btn-next:disabled {
-    opacity: .35;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
+  .btn-next:disabled { opacity: .35; cursor: not-allowed; }
+  .btn-next:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
 
-  .btn-next:not(:disabled):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(232,255,71,.25);
-  }
-
-  /* ── DONE SCREEN ── */
   #done {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 2rem;
-    text-align: center;
-    animation: fadeIn .5s ease;
+    display: none; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 100vh;
+    padding: 2rem; text-align: center; animation: fadeIn .5s ease;
   }
 
   .done-icon {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
+    width: 72px; height: 72px; border-radius: 50%;
     border: 2px solid var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; margin-bottom: 1.5rem;
     animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
   }
 
-  @keyframes popIn {
-    from { transform: scale(0); opacity: 0; }
-    to   { transform: scale(1); opacity: 1; }
-  }
+  @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
   #done h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: .75rem; }
   #done h2 span { color: var(--accent); }
   #done p { color: var(--muted); max-width: 400px; line-height: 1.7; margin-bottom: 2rem; }
 
-  .done-stats {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
+  .done-stats { display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: center; }
 
-  .done-stat {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: .75rem;
-    padding: 1rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .25rem;
-  }
-
-  .done-stat-val {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--accent);
-  }
-
-  .done-stat-label {
-    font-family: 'DM Mono', monospace;
-    font-size: .65rem;
-    color: var(--muted);
-    letter-spacing: .1em;
-    text-transform: uppercase;
-  }
+  .done-stat { background: var(--surface); border: 1px solid var(--border); border-radius: .75rem; padding: 1rem 1.5rem; display: flex; flex-direction: column; align-items: center; gap: .25rem; }
+  .done-stat-val { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+  .done-stat-label { font-family: 'DM Mono', monospace; font-size: .65rem; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
 
   .btn-download {
-    background: var(--accent);
-    color: #0e0e0f;
-    border: none;
-    padding: 1rem 2.5rem;
-    border-radius: .5rem;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: transform .15s, box-shadow .15s;
-    display: flex;
-    align-items: center;
-    gap: .5rem;
+    background: var(--accent); color: #0e0e0f; border: none;
+    padding: 1rem 2.5rem; border-radius: .5rem;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+    cursor: pointer; transition: transform .15s, box-shadow .15s;
+    display: flex; align-items: center; gap: .5rem;
   }
 
-  .btn-download:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(232,255,71,.25);
-  }
+  .btn-download:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-
-  /* ── TOOLTIP on hover ── */
-  .error-msg {
-    font-family: 'DM Mono', monospace;
-    font-size: .7rem;
-    color: var(--recon-color);
-    text-align: center;
-    display: none;
-  }
+  .error-msg { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--recon-color); text-align: center; display: none; }
   .error-msg.show { display: block; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   @media (max-width: 500px) {
     .card-body { padding: 1.25rem; }
     .survey-header { padding: .75rem 1rem; }
-    .done-stats { flex-direction: column; }
   }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════ INTRO ═══════════════════════════════════ -->
+<!-- INTRO -->
 <section id="intro">
-  <div class="intro-badge">Estudio Perceptual · Imagen Médica</div>
-  <h1>Evaluación de<br><span>Calidad Visual</span></h1>
-  <p>Se te mostrarán 60 imágenes de forma aleatoria. Para cada una indica si crees que es real o reconstruida y califica su calidad en tres dimensiones.</p>
+  <div class="intro-badge">Estudio Perceptual &middot; Imagen M&eacute;dica</div>
+  <h1>Evaluaci&oacute;n de<br><span>Calidad Visual</span></h1>
+  <p>Se te mostrar&aacute;n 60 im&aacute;genes de forma aleatoria. Para cada una indica si crees que es real o reconstruida y cal&iacute;fica su calidad en tres dimensiones.</p>
   <div class="intro-fields">
     <input type="text" id="evaluator-id" placeholder="Tu identificador (ej. EV-01)" autocomplete="off">
   </div>
-  <button class="btn-start" onclick="startSurvey()">Comenzar evaluación →</button>
+  <button class="btn-start" onclick="startSurvey()">Comenzar evaluaci&oacute;n &rarr;</button>
 </section>
 
-<!-- ═══════════════════════════════════ SURVEY ══════════════════════════════════ -->
+<!-- LOADING -->
+<section id="loading">
+  <div class="intro-badge">Preparando estudio</div>
+  <h2>Cargando im&aacute;genes<span>...</span></h2>
+  <p>Espera mientras se precargan todas las im&aacute;genes. Esto solo ocurre una vez y garantiza una experiencia fluida.</p>
+  <div class="load-bar-wrap"><div id="load-fill"></div></div>
+  <div id="load-label">0 / 60</div>
+</section>
+
+<!-- SURVEY -->
 <section id="survey">
   <header class="survey-header">
     <div class="survey-logo">Image<span>Eval</span></div>
     <div class="progress-wrap">
       <div class="progress-label">
-        <span>Progreso</span>
-        <span id="pct-label">0%</span>
+        <span>Progreso</span><span id="pct-label">0%</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
     </div>
@@ -559,84 +316,56 @@
           </svg>
           <span>Cargando imagen...</span>
         </div>
-        <div class="img-label" id="img-label">IMG —</div>
+        <div class="img-label" id="img-label">IMG --</div>
       </div>
 
       <div class="card-body">
-        <!-- TYPE -->
         <div>
-          <div class="section-label">¿Esta imagen es...?</div>
+          <div class="section-label">&iquest;Esta imagen es...?</div>
           <div class="type-toggle">
-            <button class="type-btn" id="btn-real" onclick="selectType('real')">
-              <span>✓</span> Imagen Real
-            </button>
-            <button class="type-btn" id="btn-recon" onclick="selectType('reconstructed')">
-              <span>⟳</span> Reconstruida
-            </button>
+            <button class="type-btn" id="btn-real" onclick="selectType('real')">&#10003; Imagen Real</button>
+            <button class="type-btn" id="btn-recon" onclick="selectType('reconstructed')">&#x27F3; Reconstruida</button>
           </div>
         </div>
 
-        <!-- LIKERT SCALES -->
         <div class="likert-group">
-          <div class="section-label">Calificación (1 = Muy baja · 7 = Muy alta)</div>
+          <div class="section-label">Calificaci&oacute;n (1 = Muy baja &middot; 7 = Muy alta)</div>
 
-          <!-- Calidad -->
           <div class="likert-row">
-            <div class="likert-title">
-              Calidad de imagen
-              <span class="likert-val" id="val-quality">—</span>
-            </div>
-            <div class="likert-scale" id="scale-quality">
-            </div>
+            <div class="likert-title">Calidad de imagen <span class="likert-val" id="val-quality">--</span></div>
+            <div class="likert-scale" id="scale-quality"></div>
             <div class="likert-ends"><span>Muy baja</span><span>Muy alta</span></div>
           </div>
 
-          <!-- Realismo -->
           <div class="likert-row">
-            <div class="likert-title">
-              Realismo de imagen
-              <span class="likert-val" id="val-realism">—</span>
-            </div>
+            <div class="likert-title">Realismo de imagen <span class="likert-val" id="val-realism">--</span></div>
             <div class="likert-scale" id="scale-realism"></div>
             <div class="likert-ends"><span>Nada realista</span><span>Muy realista</span></div>
           </div>
 
-          <!-- Color -->
           <div class="likert-row">
-            <div class="likert-title">
-              Realismo del color
-              <span class="likert-val" id="val-color">—</span>
-            </div>
+            <div class="likert-title">Realismo del color <span class="likert-val" id="val-color">--</span></div>
             <div class="likert-scale" id="scale-color"></div>
             <div class="likert-ends"><span>Irreal</span><span>Natural</span></div>
           </div>
         </div>
 
-        <div class="error-msg" id="error-msg">⚠ Por favor completa todos los campos antes de continuar.</div>
-        <button class="btn-next" id="btn-next" onclick="submitCurrent()">Siguiente imagen →</button>
+        <div class="error-msg" id="error-msg">&#9888; Por favor completa todos los campos antes de continuar.</div>
+        <button class="btn-next" id="btn-next" onclick="submitCurrent()">Siguiente imagen &rarr;</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════════ DONE ════════════════════════════════════ -->
+<!-- DONE -->
 <section id="done">
-  <div class="done-icon">✓</div>
-  <h2>¡Evaluación<br><span>completada!</span></h2>
-  <p>Has evaluado las 60 imágenes. Descarga el archivo CSV con tus respuestas y envíalo al investigador a cargo del estudio.</p>
+  <div class="done-icon">&#10003;</div>
+  <h2>Evaluaci&oacute;n<br><span>completada!</span></h2>
+  <p>Has evaluado las 60 im&aacute;genes. Descarga el CSV y env&iacute;alo al investigador.</p>
   <div class="done-stats">
-    <div class="done-stat">
-      <div class="done-stat-val" id="stat-real">—</div>
-      <div class="done-stat-label">Clasificadas como real</div>
-    </div>
-    <div class="done-stat">
-      <div class="done-stat-val" id="stat-recon">—</div>
-      <div class="done-stat-label">Clasificadas como reconstruida</div>
-    </div>
-    <div class="done-stat">
-      <div class="done-stat-val" id="stat-avg">—</div>
-      <div class="done-stat-label">Calidad media</div>
-    </div>
+    <div class="done-stat"><div class="done-stat-val" id="stat-real">--</div><div class="done-stat-label">Clasificadas real</div></div>
+    <div class="done-stat"><div class="done-stat-val" id="stat-recon">--</div><div class="done-stat-label">Clasificadas reconstruida</div></div>
+    <div class="done-stat"><div class="done-stat-val" id="stat-avg">--</div><div class="done-stat-label">Calidad media</div></div>
   </div>
   <button class="btn-download" onclick="downloadCSV()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -649,153 +378,237 @@
 </section>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════
-   CONFIGURACIÓN — edita esta sección para apuntar a tus imágenes
-   ═══════════════════════════════════════════════════════════════
+/* =============================================================
+   CONFIGURACION — RELLENA AQUI LOS NOMBRES DE TUS IMAGENES
+   =============================================================
 
-   Las imágenes deben estar en el repositorio.
-   Convención sugerida de carpetas:
-     images/real/       → real_001.png … real_020.png
-     images/modelA/     → modelA_001.png … modelA_020.png
-     images/modelB/     → modelB_001.png … modelB_020.png
+   Pon el nombre EXACTO de cada archivo (con extension).
+   Las carpetas deben estar dentro de tu repositorio asi:
+     images/real/     → tus 20 imagenes reales
+     images/modeloA/  → tus 20 imagenes del modelo A
+     images/modeloD/  → tus 20 imagenes del modelo D
 
-   Modifica los arrays IMAGE_LIST si usas otros nombres.
+   Ejemplo: si tienes "paciente01.png" en la carpeta real,
+   pon 'paciente01.png' en el array REAL_IMAGES.
 */
 
-const TOTAL_IMAGES = 60;
+var REAL_IMAGES = [
+  '003_VP3_frame0283.png',
+  '004_VP4_frame0008.png,
+  '005_VP4_frame0016.png',
+  '009_VP7_frame0189.png',
+  '009_VP7_frame0515.png',
+  '011_VP9_frame0170.png',
+  '012_VP9_frame0810.png',
+  '014_VP12_frame0052.png',
+  '014_VP12_frame0151.png',
+  '015_VP12_frame0135.png',
+  '015_VP12_frame0177.png',
+  '017_VP14_frame0211.png',
+  '018_VP14_frame0206.png',
+  '018_VP14_frame0359.png',
+  '018_VP14_frame1040.png',
+  '018_VP14_frame1561.png',
+  '018_VP14_frame2112.png',
+  '064_VP24_frame0052.png',
+  '064_VP24_frame0527.png',
+  '064_VP24_frame0740.png'
 
-// ──────────────────────────────────────
-// Genera los nombres de fichero automáticamente.
-// Ajusta las rutas / extensiones si difieren.
-// ──────────────────────────────────────
+];
+
+var MODELOA_IMAGES = [
+'003_VP3_frame0100_out.png',
+'004_VP4_frame0030_out.png',
+'004_VP4_frame0815_out.png',
+'009_VP7_frame0368_out.png',
+'010_VP9_frame0148_out.png',
+'011_VP9_frame0192_out.png',
+'011_VP9_frame0429_out.png',
+'011_VP9_frame0847_out.png',
+'012_VP9_frame0124_out.png',
+'012_VP9_frame0767_out.png',
+'014_VP12_frame0581_out.png',
+'017_VP14_frame0287_out.png',
+'018_VP14_frame0255_out.png',
+'018_VP14_frame0555_out.png',
+'018_VP14_frame0916_out.png',
+'018_VP14_frame1761_out.png',
+'064_VP24_frame0149_out.png',
+'064_VP24_frame0573_out.png',
+'064_VP24_frame1378_out.png',
+'064_VP24_frame1678_out.png'
+];
+
+var MODELOD_IMAGES = [
+  '003_VP3_frame0304_out.png',
+  '004_VP4_frame0288_out.png',
+  '009_VP7_frame0141_out.png',
+  '009_VP7_frame0368_out.png',
+  '010_VP9_frame0082_out.png',
+  '010_VP9_frame0301_out.png',
+  '011_VP9_frame0096_out.png',
+  '011_VP9_frame0214_out.png',
+  '011_VP9_frame0380_out.png',
+  '011_VP9_frame0580_out.png',
+  '011_VP9_frame0894_out.png',
+  '012_VP9_frame0068_out.png',
+  '012_VP9_frame0307_out.png',
+  '012_VP9_frame0723_out.png',
+  '014_VP12_frame0336_out.png',
+  '017_VP14_frame0211_out.png',
+  '018_VP14_frame0916_out.png',
+  '018_VP14_frame1925_out.png',
+  '064_VP24_frame0479_out.png',
+  '064_VP24_frame1942_out.png'
+];
+
+/* ============================================================= */
+
+var TOTAL_IMAGES = 60;
+
 function buildImageList() {
-  const list = [];
-  for (let i = 1; i <= 20; i++) {
-    const n = String(i).padStart(3, '0');
-    list.push({ file: `images/real/real_${n}.png`,    group: 'real',   display: `Real ${n}` });
-    list.push({ file: `images/modeloA/modeloA_${n}.png`, group: 'modeloA', display: `Modelo A ${n}` });
-    list.push({ file: `images/modeloD/modeloD_${n}.png`, group: 'modeloD', display: `Modelo D ${n}` });
-  }
+  var list = [];
+  REAL_IMAGES.forEach(function(f) {
+    list.push({ file: 'images/real/' + f, group: 'real' });
+  });
+  MODELOA_IMAGES.forEach(function(f) {
+    list.push({ file: 'images/modeloA/' + f, group: 'modeloA' });
+  });
+  MODELOD_IMAGES.forEach(function(f) {
+    list.push({ file: 'images/modeloD/' + f, group: 'modeloD' });
+  });
   return list;
 }
 
-/* ══════════════════════════════════════════════════════════════ */
+var imageList    = [];
+var imageCache   = {};
+var currentIdx   = 0;
+var responses    = [];
+var evaluatorId  = '';
+var selectedType = null;
 
-let imageList   = [];
-let currentIdx  = 0;
-let responses   = [];
-let evaluatorId = '';
-let evaluatorExpertise = '';
-let selectedType = null;
-
-// Fisher-Yates shuffle
 function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
   }
   return a;
 }
 
 function buildLikertScale(containerId, name, valId) {
-  const container = document.getElementById(containerId);
+  var container = document.getElementById(containerId);
   container.innerHTML = '';
-  for (let v = 1; v <= 7; v++) {
-    const lbl = document.createElement('label');
-    const inp = document.createElement('input');
-    inp.type  = 'radio';
-    inp.name  = name;
-    inp.value = v;
-    inp.addEventListener('change', () => {
-      document.getElementById(valId).textContent = v;
-      checkReady();
-    });
-    const dot = document.createElement('div');
-    dot.className = 'likert-dot';
-    dot.textContent = v;
-    lbl.appendChild(inp);
-    lbl.appendChild(dot);
-    container.appendChild(lbl);
+  for (var v = 1; v <= 7; v++) {
+    (function(val) {
+      var lbl = document.createElement('label');
+      var inp = document.createElement('input');
+      inp.type  = 'radio';
+      inp.name  = name;
+      inp.value = val;
+      inp.addEventListener('change', function() {
+        document.getElementById(valId).textContent = val;
+        checkReady();
+      });
+      var dot = document.createElement('div');
+      dot.className   = 'likert-dot';
+      dot.textContent = val;
+      lbl.appendChild(inp);
+      lbl.appendChild(dot);
+      container.appendChild(lbl);
+    })(v);
   }
 }
 
+function preloadAll(list, onDone) {
+  var loaded = 0;
+  var total  = list.length;
+  var fill   = document.getElementById('load-fill');
+  var label  = document.getElementById('load-label');
+
+  list.forEach(function(img) {
+    var el = new Image();
+    var done = function() {
+      loaded++;
+      fill.style.width  = Math.round((loaded / total) * 100) + '%';
+      label.textContent = loaded + ' / ' + total;
+      imageCache[img.file] = el;
+      if (loaded === total) onDone();
+    };
+    el.onload  = done;
+    el.onerror = done;
+    el.src     = img.file;
+  });
+}
+
 function startSurvey() {
-  const idInput = document.getElementById('evaluator-id').value.trim();
+  var idInput = document.getElementById('evaluator-id').value.trim();
   if (!idInput) { alert('Por favor introduce tu identificador.'); return; }
 
-  evaluatorId        = idInput;
-  evaluatorExpertise = '';
-  imageList          = shuffle(buildImageList());
+  evaluatorId = idInput;
+  imageList   = shuffle(buildImageList());
 
   buildLikertScale('scale-quality', 'quality', 'val-quality');
   buildLikertScale('scale-realism', 'realism', 'val-realism');
   buildLikertScale('scale-color',   'color',   'val-color');
 
-  document.getElementById('intro').style.display  = 'none';
-  document.getElementById('survey').style.display = 'block';
+  document.getElementById('intro').style.display   = 'none';
+  document.getElementById('loading').style.display = 'flex';
 
-  loadImage(0);
-}
-
-function preloadNext(idx) {
-  const toPreload = [idx + 1, idx + 2];
-  toPreload.forEach(i => {
-    if (i < imageList.length) {
-      const pre = new Image();
-      pre.src = imageList[i].file;
-    }
+  preloadAll(imageList, function() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('survey').style.display  = 'block';
+    loadImage(0);
   });
 }
 
 function loadImage(idx) {
-  const img = imageList[idx];
+  var img = imageList[idx];
   currentIdx   = idx;
   selectedType = null;
 
-  // reset UI
   document.getElementById('btn-real').className  = 'type-btn';
   document.getElementById('btn-recon').className = 'type-btn';
-  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-  document.getElementById('val-quality').textContent = '—';
-  document.getElementById('val-realism').textContent = '—';
-  document.getElementById('val-color').textContent   = '—';
+  document.querySelectorAll('input[type="radio"]').forEach(function(r) { r.checked = false; });
+  document.getElementById('val-quality').textContent = '--';
+  document.getElementById('val-realism').textContent = '--';
+  document.getElementById('val-color').textContent   = '--';
   document.getElementById('error-msg').classList.remove('show');
   document.getElementById('btn-next').disabled = true;
 
-  // label
-  document.getElementById('img-label').textContent = `IMG ${String(idx + 1).padStart(2, '0')}`;
+  document.getElementById('img-label').textContent = 'IMG ' + String(idx + 1).padStart(2, '0');
 
-  // image
-  const container = document.getElementById('img-container');
-  const existing  = container.querySelector('img');
+  var container   = document.getElementById('img-container');
+  var existing    = container.querySelector('img');
   if (existing) existing.remove();
 
-  const el   = document.createElement('img');
-  el.src     = img.file;
-  el.alt     = `Imagen ${idx + 1}`;
-  el.onerror = () => {
-    el.remove();
-    container.querySelector('.img-placeholder').style.display = 'flex';
-  };
-  el.onload = () => {
-    container.querySelector('.img-placeholder').style.display = 'none';
-  };
-  container.querySelector('.img-placeholder').style.display = 'flex';
-  container.appendChild(el);
-  preloadNext(idx);
+  var placeholder = container.querySelector('.img-placeholder');
+  var cached      = imageCache[img.file];
+  var el          = new Image();
+  el.style.width     = '100%';
+  el.style.height    = '100%';
+  el.style.objectFit = 'contain';
+  el.alt = 'Imagen ' + (idx + 1);
 
-  // progress
-  const pct = Math.round((idx / TOTAL_IMAGES) * 100);
+  if (cached && cached.complete && cached.naturalWidth > 0) {
+    el.src = cached.src;
+    placeholder.style.display = 'none';
+  } else {
+    el.src = img.file;
+    placeholder.style.display = 'flex';
+    el.onload = function() { placeholder.style.display = 'none'; };
+  }
+
+  container.appendChild(el);
+
+  var pct = Math.round((idx / TOTAL_IMAGES) * 100);
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('pct-label').textContent     = pct + '%';
-  document.getElementById('counter-pill').textContent  = `${idx + 1} / ${TOTAL_IMAGES}`;
+  document.getElementById('counter-pill').textContent  = (idx + 1) + ' / ' + TOTAL_IMAGES;
 
-  // last button label
   document.getElementById('btn-next').textContent =
-    idx === TOTAL_IMAGES - 1 ? 'Finalizar evaluación ✓' : 'Siguiente imagen →';
+    idx === TOTAL_IMAGES - 1 ? 'Finalizar evaluacion' : 'Siguiente imagen';
 
-  // scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -809,53 +622,51 @@ function selectType(type) {
 }
 
 function getRadioVal(name) {
-  const sel = document.querySelector(`input[name="${name}"]:checked`);
+  var sel = document.querySelector('input[name="' + name + '"]:checked');
   return sel ? parseInt(sel.value) : null;
 }
 
 function checkReady() {
-  const ok = selectedType !== null &&
-             getRadioVal('quality') !== null &&
-             getRadioVal('realism') !== null &&
-             getRadioVal('color')   !== null;
+  var ok = selectedType !== null &&
+           getRadioVal('quality') !== null &&
+           getRadioVal('realism') !== null &&
+           getRadioVal('color')   !== null;
   document.getElementById('btn-next').disabled = !ok;
 }
 
 function submitCurrent() {
-  const quality = getRadioVal('quality');
-  const realism = getRadioVal('realism');
-  const color   = getRadioVal('color');
+  var quality = getRadioVal('quality');
+  var realism = getRadioVal('realism');
+  var color   = getRadioVal('color');
 
   if (!selectedType || quality === null || realism === null || color === null) {
     document.getElementById('error-msg').classList.add('show');
     return;
   }
 
-  const img = imageList[currentIdx];
+  var img = imageList[currentIdx];
   responses.push({
-    evaluator_id:        evaluatorId,
-    evaluator_expertise: evaluatorExpertise,
-    image_index:         currentIdx + 1,
-    image_file:          img.file,
-    image_group:         img.group,
-    perceived_type:      selectedType,
-    quality_score:       quality,
-    realism_score:       realism,
-    color_score:         color,
-    timestamp:           new Date().toISOString()
+    evaluator_id:   evaluatorId,
+    image_index:    currentIdx + 1,
+    image_file:     img.file,
+    image_group:    img.group,
+    perceived_type: selectedType,
+    quality_score:  quality,
+    realism_score:  realism,
+    color_score:    color,
+    timestamp:      new Date().toISOString()
   });
 
   if (currentIdx + 1 >= TOTAL_IMAGES) {
     showDone();
   } else {
-    // animate card out then load next
-    const card = document.getElementById('main-card');
-    card.style.opacity   = '0';
-    card.style.transform = 'translateY(-16px)';
+    var card = document.getElementById('main-card');
+    card.style.opacity    = '0';
+    card.style.transform  = 'translateY(-16px)';
     card.style.transition = 'opacity .2s, transform .2s';
-    setTimeout(() => {
-      card.style.opacity   = '';
-      card.style.transform = '';
+    setTimeout(function() {
+      card.style.opacity    = '';
+      card.style.transform  = '';
       card.style.transition = '';
       loadImage(currentIdx + 1);
     }, 200);
@@ -864,12 +675,12 @@ function submitCurrent() {
 
 function showDone() {
   document.getElementById('survey').style.display = 'none';
-  const done = document.getElementById('done');
-  done.style.display = 'flex';
+  document.getElementById('done').style.display   = 'flex';
 
-  const nReal  = responses.filter(r => r.perceived_type === 'real').length;
-  const nRecon = responses.filter(r => r.perceived_type === 'reconstructed').length;
-  const avgQ   = (responses.reduce((s, r) => s + r.quality_score, 0) / responses.length).toFixed(2);
+  var nReal  = responses.filter(function(r) { return r.perceived_type === 'real'; }).length;
+  var nRecon = responses.filter(function(r) { return r.perceived_type === 'reconstructed'; }).length;
+  var sum    = responses.reduce(function(s, r) { return s + r.quality_score; }, 0);
+  var avgQ   = (sum / responses.length).toFixed(2);
 
   document.getElementById('stat-real').textContent  = nReal;
   document.getElementById('stat-recon').textContent = nRecon;
@@ -877,29 +688,23 @@ function showDone() {
 }
 
 function downloadCSV() {
-  const header = [
-    'evaluator_id', 'evaluator_expertise',
-    'image_index', 'image_file', 'image_group',
-    'perceived_type',
-    'quality_score', 'realism_score', 'color_score',
-    'timestamp'
-  ];
+  var header = ['evaluator_id','image_index','image_file','image_group',
+                'perceived_type','quality_score','realism_score','color_score','timestamp'];
 
-  const rows = responses.map(r =>
-    header.map(k => {
-      const v = String(r[k] ?? '');
-      // quote fields that contain commas or quotes
-      return v.includes(',') || v.includes('"') ? `"${v.replace(/"/g, '""')}"` : v;
-    }).join(',')
-  );
+  var rows = responses.map(function(r) {
+    return header.map(function(k) {
+      var v = String(r[k] !== undefined ? r[k] : '');
+      return (v.indexOf(',') >= 0 || v.indexOf('"') >= 0) ? '"' + v.replace(/"/g, '""') + '"' : v;
+    }).join(',');
+  });
 
-  const csv     = [header.join(','), ...rows].join('\n');
-  const blob    = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url     = URL.createObjectURL(blob);
-  const a       = document.createElement('a');
-  const safeId  = evaluatorId.replace(/[^a-zA-Z0-9_-]/g, '_');
-  a.href        = url;
-  a.download    = `survey_${safeId}_${Date.now()}.csv`;
+  var csv    = [header.join(',')].concat(rows).join('\n');
+  var blob   = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var url    = URL.createObjectURL(blob);
+  var a      = document.createElement('a');
+  var safeId = evaluatorId.replace(/[^a-zA-Z0-9_-]/g, '_');
+  a.href     = url;
+  a.download = 'survey_' + safeId + '_' + Date.now() + '.csv';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
