@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación de Calidad de Imagen</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;800&display=swap');
+
+  :root {
+    --bg: #0e0e0f;
+    --surface: #161618;
+    --surface2: #1e1e21;
+    --border: #2a2a2e;
+    --accent: #e8ff47;
+    --accent2: #ff6b35;
+    --text: #f0efe8;
+    --muted: #6b6b72;
+    --real-color: #4ade80;
+    --recon-color: #f87171;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* ── INTRO SCREEN ── */
+  #intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    text-align: center;
+    animation: fadeIn .6s ease;
+  }
+
+  .intro-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: .7rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: .35rem .9rem;
+    border-radius: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  #intro h1 {
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    max-width: 700px;
+    margin-bottom: 1.2rem;
+  }
+
+  #intro h1 span { color: var(--accent); }
+
+  #intro p {
+    color: var(--muted);
+    max-width: 500px;
+    line-height: 1.7;
+    font-size: .95rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .intro-fields {
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+    width: 100%;
+    max-width: 360px;
+    margin-bottom: 2rem;
+  }
+
+  .intro-fields input, .intro-fields select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: .85rem 1.1rem;
+    border-radius: .5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: .9rem;
+    outline: none;
+    transition: border-color .2s;
+    width: 100%;
+  }
+
+  .intro-fields input:focus, .intro-fields select:focus {
+    border-color: var(--accent);
+  }
+
+  .intro-fields select option { background: var(--surface2); }
+
+  .btn-start {
+    background: var(--accent);
+    color: #0e0e0f;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: .5rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    letter-spacing: .05em;
+    transition: transform .15s, box-shadow .15s;
+  }
+
+  .btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232,255,71,.25);
+  }
+
+  /* ── SURVEY SCREEN ── */
+  #survey { display: none; padding: 0; animation: fadeIn .4s ease; }
+
+  .survey-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(14,14,15,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .survey-logo {
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: -.01em;
+  }
+
+  .survey-logo span { color: var(--accent); }
+
+  .progress-wrap {
+    flex: 1;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+  }
+
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .7rem;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width .4s ease;
+    width: 0%;
+  }
+
+  .counter-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: .75rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: .3rem .75rem;
+    border-radius: 2rem;
+    white-space: nowrap;
+  }
+
+  /* ── CARD ── */
+  .card-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    overflow: hidden;
+    width: 100%;
+    max-width: 620px;
+    animation: slideUp .35s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .img-container {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .img-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .75rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: .75rem;
+  }
+
+  .img-placeholder svg { opacity: .3; }
+
+  .img-label {
+    position: absolute;
+    top: .75rem;
+    left: .75rem;
+    font-family: 'DM Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .1em;
+    background: rgba(14,14,15,.8);
+    border: 1px solid var(--border);
+    padding: .25rem .6rem;
+    border-radius: .3rem;
+    color: var(--muted);
+  }
+
+  .card-body { padding: 1.75rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+  /* ── TYPE TOGGLE ── */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: .75rem;
+  }
+
+  .type-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .5rem;
+  }
+
+  .type-btn {
+    padding: .85rem;
+    border-radius: .5rem;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: .9rem;
+    cursor: pointer;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+  }
+
+  .type-btn:hover { border-color: var(--text); color: var(--text); }
+
+  .type-btn.selected-real {
+    border-color: var(--real-color);
+    background: rgba(74,222,128,.08);
+    color: var(--real-color);
+  }
+
+  .type-btn.selected-recon {
+    border-color: var(--recon-color);
+    background: rgba(248,113,113,.08);
+    color: var(--recon-color);
+  }
+
+  /* ── LIKERT ── */
+  .likert-group { display: flex; flex-direction: column; gap: 1.1rem; }
+
+  .likert-row { display: flex; flex-direction: column; gap: .5rem; }
+
+  .likert-title {
+    font-size: .88rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .likert-val {
+    font-family: 'DM Mono', monospace;
+    font-size: .75rem;
+    color: var(--accent);
+    min-width: 1.5rem;
+    text-align: right;
+  }
+
+  .likert-scale {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: .3rem;
+  }
+
+  .likert-scale label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .3rem;
+    cursor: pointer;
+  }
+
+  .likert-scale input[type="radio"] { display: none; }
+
+  .likert-dot {
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 44px;
+    border-radius: .3rem;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: .75rem;
+    color: var(--muted);
+    transition: all .15s;
+    cursor: pointer;
+  }
+
+  .likert-scale label:hover .likert-dot {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .likert-scale input[type="radio"]:checked + .likert-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0e0e0f;
+    font-weight: 700;
+  }
+
+  .likert-ends {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: .6rem;
+    color: var(--muted);
+    padding: 0 .1rem;
+  }
+
+  /* ── NEXT BTN ── */
+  .btn-next {
+    background: var(--accent);
+    color: #0e0e0f;
+    border: none;
+    padding: .95rem;
+    border-radius: .5rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: .95rem;
+    cursor: pointer;
+    width: 100%;
+    transition: transform .15s, box-shadow .15s, opacity .2s;
+    letter-spacing: .04em;
+  }
+
+  .btn-next:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-next:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232,255,71,.25);
+  }
+
+  /* ── DONE SCREEN ── */
+  #done {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    text-align: center;
+    animation: fadeIn .5s ease;
+  }
+
+  .done-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  #done h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: .75rem; }
+  #done h2 span { color: var(--accent); }
+  #done p { color: var(--muted); max-width: 400px; line-height: 1.7; margin-bottom: 2rem; }
+
+  .done-stats {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .done-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+  }
+
+  .done-stat-val {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .done-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .65rem;
+    color: var(--muted);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .btn-download {
+    background: var(--accent);
+    color: #0e0e0f;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: .5rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .btn-download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232,255,71,.25);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── TOOLTIP on hover ── */
+  .error-msg {
+    font-family: 'DM Mono', monospace;
+    font-size: .7rem;
+    color: var(--recon-color);
+    text-align: center;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+
+  @media (max-width: 500px) {
+    .card-body { padding: 1.25rem; }
+    .survey-header { padding: .75rem 1rem; }
+    .done-stats { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ INTRO ═══════════════════════════════════ -->
+<section id="intro">
+  <div class="intro-badge">Estudio Perceptual · Imagen Médica</div>
+  <h1>Evaluación de<br><span>Calidad Visual</span></h1>
+  <p>Se te mostrarán 60 imágenes de forma aleatoria. Para cada una indica si crees que es real o reconstruida y califica su calidad en tres dimensiones.</p>
+  <div class="intro-fields">
+    <input type="text" id="evaluator-id" placeholder="Tu identificador (ej. EV-01)" autocomplete="off">
+  </div>
+  <button class="btn-start" onclick="startSurvey()">Comenzar evaluación →</button>
+</section>
+
+<!-- ═══════════════════════════════════ SURVEY ══════════════════════════════════ -->
+<section id="survey">
+  <header class="survey-header">
+    <div class="survey-logo">Image<span>Eval</span></div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Progreso</span>
+        <span id="pct-label">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div class="counter-pill" id="counter-pill">1 / 60</div>
+  </header>
+
+  <div class="card-wrap">
+    <div class="card" id="main-card">
+      <div class="img-container" id="img-container">
+        <div class="img-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <span>Cargando imagen...</span>
+        </div>
+        <div class="img-label" id="img-label">IMG —</div>
+      </div>
+
+      <div class="card-body">
+        <!-- TYPE -->
+        <div>
+          <div class="section-label">¿Esta imagen es...?</div>
+          <div class="type-toggle">
+            <button class="type-btn" id="btn-real" onclick="selectType('real')">
+              <span>✓</span> Imagen Real
+            </button>
+            <button class="type-btn" id="btn-recon" onclick="selectType('reconstructed')">
+              <span>⟳</span> Reconstruida
+            </button>
+          </div>
+        </div>
+
+        <!-- LIKERT SCALES -->
+        <div class="likert-group">
+          <div class="section-label">Calificación (1 = Muy baja · 7 = Muy alta)</div>
+
+          <!-- Calidad -->
+          <div class="likert-row">
+            <div class="likert-title">
+              Calidad de imagen
+              <span class="likert-val" id="val-quality">—</span>
+            </div>
+            <div class="likert-scale" id="scale-quality">
+            </div>
+            <div class="likert-ends"><span>Muy baja</span><span>Muy alta</span></div>
+          </div>
+
+          <!-- Realismo -->
+          <div class="likert-row">
+            <div class="likert-title">
+              Realismo de imagen
+              <span class="likert-val" id="val-realism">—</span>
+            </div>
+            <div class="likert-scale" id="scale-realism"></div>
+            <div class="likert-ends"><span>Nada realista</span><span>Muy realista</span></div>
+          </div>
+
+          <!-- Color -->
+          <div class="likert-row">
+            <div class="likert-title">
+              Realismo del color
+              <span class="likert-val" id="val-color">—</span>
+            </div>
+            <div class="likert-scale" id="scale-color"></div>
+            <div class="likert-ends"><span>Irreal</span><span>Natural</span></div>
+          </div>
+        </div>
+
+        <div class="error-msg" id="error-msg">⚠ Por favor completa todos los campos antes de continuar.</div>
+        <button class="btn-next" id="btn-next" onclick="submitCurrent()">Siguiente imagen →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DONE ════════════════════════════════════ -->
+<section id="done">
+  <div class="done-icon">✓</div>
+  <h2>¡Evaluación<br><span>completada!</span></h2>
+  <p>Has evaluado las 60 imágenes. Descarga el archivo CSV con tus respuestas y envíalo al investigador a cargo del estudio.</p>
+  <div class="done-stats">
+    <div class="done-stat">
+      <div class="done-stat-val" id="stat-real">—</div>
+      <div class="done-stat-label">Clasificadas como real</div>
+    </div>
+    <div class="done-stat">
+      <div class="done-stat-val" id="stat-recon">—</div>
+      <div class="done-stat-label">Clasificadas como reconstruida</div>
+    </div>
+    <div class="done-stat">
+      <div class="done-stat-val" id="stat-avg">—</div>
+      <div class="done-stat-label">Calidad media</div>
+    </div>
+  </div>
+  <button class="btn-download" onclick="downloadCSV()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Descargar CSV
+  </button>
+</section>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   CONFIGURACIÓN — edita esta sección para apuntar a tus imágenes
+   ═══════════════════════════════════════════════════════════════
+
+   Las imágenes deben estar en el repositorio.
+   Convención sugerida de carpetas:
+     images/real/       → real_001.png … real_020.png
+     images/modelA/     → modelA_001.png … modelA_020.png
+     images/modelB/     → modelB_001.png … modelB_020.png
+
+   Modifica los arrays IMAGE_LIST si usas otros nombres.
+*/
+
+const TOTAL_IMAGES = 60;
+
+// ──────────────────────────────────────
+// Genera los nombres de fichero automáticamente.
+// Ajusta las rutas / extensiones si difieren.
+// ──────────────────────────────────────
+function buildImageList() {
+  const list = [];
+  for (let i = 1; i <= 20; i++) {
+    const n = String(i).padStart(3, '0');
+    list.push({ file: `images/real/real_${n}.png`,    group: 'real',   display: `Real ${n}` });
+    list.push({ file: `images/modelA/modelA_${n}.png`, group: 'modelA', display: `Modelo A ${n}` });
+    list.push({ file: `images/modelB/modelB_${n}.png`, group: 'modelB', display: `Modelo B ${n}` });
+  }
+  return list;
+}
+
+/* ══════════════════════════════════════════════════════════════ */
+
+let imageList   = [];
+let currentIdx  = 0;
+let responses   = [];
+let evaluatorId = '';
+let evaluatorExpertise = '';
+let selectedType = null;
+
+// Fisher-Yates shuffle
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildLikertScale(containerId, name, valId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  for (let v = 1; v <= 7; v++) {
+    const lbl = document.createElement('label');
+    const inp = document.createElement('input');
+    inp.type  = 'radio';
+    inp.name  = name;
+    inp.value = v;
+    inp.addEventListener('change', () => {
+      document.getElementById(valId).textContent = v;
+      checkReady();
+    });
+    const dot = document.createElement('div');
+    dot.className = 'likert-dot';
+    dot.textContent = v;
+    lbl.appendChild(inp);
+    lbl.appendChild(dot);
+    container.appendChild(lbl);
+  }
+}
+
+function startSurvey() {
+  const idInput = document.getElementById('evaluator-id').value.trim();
+  if (!idInput) { alert('Por favor introduce tu identificador.'); return; }
+
+  evaluatorId        = idInput;
+  evaluatorExpertise = '';
+  imageList          = shuffle(buildImageList());
+
+  buildLikertScale('scale-quality', 'quality', 'val-quality');
+  buildLikertScale('scale-realism', 'realism', 'val-realism');
+  buildLikertScale('scale-color',   'color',   'val-color');
+
+  document.getElementById('intro').style.display  = 'none';
+  document.getElementById('survey').style.display = 'block';
+
+  loadImage(0);
+}
+
+function loadImage(idx) {
+  const img = imageList[idx];
+  currentIdx   = idx;
+  selectedType = null;
+
+  // reset UI
+  document.getElementById('btn-real').className  = 'type-btn';
+  document.getElementById('btn-recon').className = 'type-btn';
+  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+  document.getElementById('val-quality').textContent = '—';
+  document.getElementById('val-realism').textContent = '—';
+  document.getElementById('val-color').textContent   = '—';
+  document.getElementById('error-msg').classList.remove('show');
+  document.getElementById('btn-next').disabled = true;
+
+  // label
+  document.getElementById('img-label').textContent = `IMG ${String(idx + 1).padStart(2, '0')}`;
+
+  // image
+  const container = document.getElementById('img-container');
+  const existing  = container.querySelector('img');
+  if (existing) existing.remove();
+
+  const el   = document.createElement('img');
+  el.src     = img.file;
+  el.alt     = `Imagen ${idx + 1}`;
+  el.onerror = () => {
+    el.remove();
+    container.querySelector('.img-placeholder').style.display = 'flex';
+  };
+  el.onload = () => {
+    container.querySelector('.img-placeholder').style.display = 'none';
+  };
+  container.querySelector('.img-placeholder').style.display = 'flex';
+  container.appendChild(el);
+
+  // progress
+  const pct = Math.round((idx / TOTAL_IMAGES) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('pct-label').textContent     = pct + '%';
+  document.getElementById('counter-pill').textContent  = `${idx + 1} / ${TOTAL_IMAGES}`;
+
+  // last button label
+  document.getElementById('btn-next').textContent =
+    idx === TOTAL_IMAGES - 1 ? 'Finalizar evaluación ✓' : 'Siguiente imagen →';
+
+  // scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectType(type) {
+  selectedType = type;
+  document.getElementById('btn-real').className =
+    type === 'real' ? 'type-btn selected-real' : 'type-btn';
+  document.getElementById('btn-recon').className =
+    type === 'reconstructed' ? 'type-btn selected-recon' : 'type-btn';
+  checkReady();
+}
+
+function getRadioVal(name) {
+  const sel = document.querySelector(`input[name="${name}"]:checked`);
+  return sel ? parseInt(sel.value) : null;
+}
+
+function checkReady() {
+  const ok = selectedType !== null &&
+             getRadioVal('quality') !== null &&
+             getRadioVal('realism') !== null &&
+             getRadioVal('color')   !== null;
+  document.getElementById('btn-next').disabled = !ok;
+}
+
+function submitCurrent() {
+  const quality = getRadioVal('quality');
+  const realism = getRadioVal('realism');
+  const color   = getRadioVal('color');
+
+  if (!selectedType || quality === null || realism === null || color === null) {
+    document.getElementById('error-msg').classList.add('show');
+    return;
+  }
+
+  const img = imageList[currentIdx];
+  responses.push({
+    evaluator_id:        evaluatorId,
+    evaluator_expertise: evaluatorExpertise,
+    image_index:         currentIdx + 1,
+    image_file:          img.file,
+    image_group:         img.group,
+    perceived_type:      selectedType,
+    quality_score:       quality,
+    realism_score:       realism,
+    color_score:         color,
+    timestamp:           new Date().toISOString()
+  });
+
+  if (currentIdx + 1 >= TOTAL_IMAGES) {
+    showDone();
+  } else {
+    // animate card out then load next
+    const card = document.getElementById('main-card');
+    card.style.opacity   = '0';
+    card.style.transform = 'translateY(-16px)';
+    card.style.transition = 'opacity .2s, transform .2s';
+    setTimeout(() => {
+      card.style.opacity   = '';
+      card.style.transform = '';
+      card.style.transition = '';
+      loadImage(currentIdx + 1);
+    }, 200);
+  }
+}
+
+function showDone() {
+  document.getElementById('survey').style.display = 'none';
+  const done = document.getElementById('done');
+  done.style.display = 'flex';
+
+  const nReal  = responses.filter(r => r.perceived_type === 'real').length;
+  const nRecon = responses.filter(r => r.perceived_type === 'reconstructed').length;
+  const avgQ   = (responses.reduce((s, r) => s + r.quality_score, 0) / responses.length).toFixed(2);
+
+  document.getElementById('stat-real').textContent  = nReal;
+  document.getElementById('stat-recon').textContent = nRecon;
+  document.getElementById('stat-avg').textContent   = avgQ;
+}
+
+function downloadCSV() {
+  const header = [
+    'evaluator_id', 'evaluator_expertise',
+    'image_index', 'image_file', 'image_group',
+    'perceived_type',
+    'quality_score', 'realism_score', 'color_score',
+    'timestamp'
+  ];
+
+  const rows = responses.map(r =>
+    header.map(k => {
+      const v = String(r[k] ?? '');
+      // quote fields that contain commas or quotes
+      return v.includes(',') || v.includes('"') ? `"${v.replace(/"/g, '""')}"` : v;
+    }).join(',')
+  );
+
+  const csv     = [header.join(','), ...rows].join('\n');
+  const blob    = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url     = URL.createObjectURL(blob);
+  const a       = document.createElement('a');
+  const safeId  = evaluatorId.replace(/[^a-zA-Z0-9_-]/g, '_');
+  a.href        = url;
+  a.download    = `survey_${safeId}_${Date.now()}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
