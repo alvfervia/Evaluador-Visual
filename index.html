@@ -738,6 +738,16 @@ function startSurvey() {
   loadImage(0);
 }
 
+function preloadNext(idx) {
+  const toPreload = [idx + 1, idx + 2];
+  toPreload.forEach(i => {
+    if (i < imageList.length) {
+      const pre = new Image();
+      pre.src = imageList[i].file;
+    }
+  });
+}
+
 function loadImage(idx) {
   const img = imageList[idx];
   currentIdx   = idx;
@@ -773,6 +783,7 @@ function loadImage(idx) {
   };
   container.querySelector('.img-placeholder').style.display = 'flex';
   container.appendChild(el);
+  preloadNext(idx);
 
   // progress
   const pct = Math.round((idx / TOTAL_IMAGES) * 100);
