@@ -250,15 +250,29 @@
   .done-stat-val { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
   .done-stat-label { font-family: 'DM Mono', monospace; font-size: .65rem; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
 
-  .btn-download {
-    background: var(--accent); color: #0e0e0f; border: none;
-    padding: 1rem 2.5rem; border-radius: .5rem;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+  .done-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+  .btn-download, .btn-upload {
+    border: none; padding: 1rem 2rem; border-radius: .5rem;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem;
     cursor: pointer; transition: transform .15s, box-shadow .15s;
     display: flex; align-items: center; gap: .5rem;
   }
 
+  .btn-download { background: var(--accent); color: #0e0e0f; }
   .btn-download:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
+
+  .btn-upload { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-upload:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-upload:disabled { opacity: .4; cursor: not-allowed; }
+
+  .upload-status {
+    font-family: 'DM Mono', monospace; font-size: .75rem;
+    margin-top: .75rem; padding: .5rem 1rem; border-radius: .4rem;
+    display: none;
+  }
+  .upload-status.ok  { display: block; background: rgba(74,222,128,.1); color: var(--real-color); border: 1px solid rgba(74,222,128,.3); }
+  .upload-status.err { display: block; background: rgba(248,113,113,.1); color: var(--recon-color); border: 1px solid rgba(248,113,113,.3); }
 
   .error-msg { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--recon-color); text-align: center; display: none; }
   .error-msg.show { display: block; }
@@ -277,7 +291,7 @@
 <section id="intro">
   <div class="intro-badge">Estudio Perceptual &middot; Imagen M&eacute;dica</div>
   <h1>Evaluaci&oacute;n de<br><span>Calidad Visual</span></h1>
-  <p>Se te mostrar&aacute;n 60 im&aacute;genes de forma aleatoria. Para cada una indica si crees que es real o reconstruida y cal&iacute;fica su calidad en tres dimensiones.</p>
+  <p>Se te mostrar&aacute;n im&aacute;genes de forma aleatoria. Para cada una indica si crees que es real o reconstruida y cal&iacute;fica su calidad en tres dimensiones.</p>
   <div class="intro-fields">
     <input type="text" id="evaluator-id" placeholder="Tu identificador (ej. EV-01)" autocomplete="off">
   </div>
@@ -288,9 +302,9 @@
 <section id="loading">
   <div class="intro-badge">Preparando estudio</div>
   <h2>Cargando im&aacute;genes<span>...</span></h2>
-  <p>Espera mientras se precargan todas las im&aacute;genes. Esto solo ocurre una vez y garantiza una experiencia fluida.</p>
+  <p>Espera mientras se precargan todas las im&aacute;genes. Esto solo ocurre una vez.</p>
   <div class="load-bar-wrap"><div id="load-fill"></div></div>
-  <div id="load-label">0 / 60</div>
+  <div id="load-label">0 / 0</div>
 </section>
 
 <!-- SURVEY -->
@@ -303,7 +317,7 @@
       </div>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
     </div>
-    <div class="counter-pill" id="counter-pill">1 / 60</div>
+    <div class="counter-pill" id="counter-pill">1 / ?</div>
   </header>
 
   <div class="card-wrap">
@@ -361,20 +375,29 @@
 <section id="done">
   <div class="done-icon">&#10003;</div>
   <h2>Evaluaci&oacute;n<br><span>completada!</span></h2>
-  <p>Has evaluado las 60 im&aacute;genes. Descarga el CSV y env&iacute;alo al investigador.</p>
+  <p>Has evaluado todas las im&aacute;genes. Descarga el CSV o env&iacute;alo directamente al repositorio.</p>
   <div class="done-stats">
     <div class="done-stat"><div class="done-stat-val" id="stat-real">--</div><div class="done-stat-label">Clasificadas real</div></div>
     <div class="done-stat"><div class="done-stat-val" id="stat-recon">--</div><div class="done-stat-label">Clasificadas reconstruida</div></div>
     <div class="done-stat"><div class="done-stat-val" id="stat-avg">--</div><div class="done-stat-label">Calidad media</div></div>
   </div>
-  <button class="btn-download" onclick="downloadCSV()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-      <polyline points="7 10 12 15 17 10"/>
-      <line x1="12" y1="15" x2="12" y2="3"/>
-    </svg>
-    Descargar CSV
-  </button>
+  <div class="done-actions">
+    <button class="btn-download" onclick="downloadCSV()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Descargar CSV
+    </button>
+    <button class="btn-upload" id="btn-upload" onclick="uploadToGitHub()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
+      </svg>
+      Enviar a GitHub
+    </button>
+  </div>
+  <div class="upload-status" id="upload-status"></div>
 </section>
 
 <script>
@@ -382,17 +405,22 @@
    CONFIGURACION — RELLENA AQUI LOS NOMBRES DE TUS IMAGENES
    =============================================================
 
-   Pon el nombre EXACTO de cada archivo (con extension).
-   Las carpetas deben estar dentro de tu repositorio asi:
-     images/real/     → tus 20 imagenes reales
-     images/modeloA/  → tus 20 imagenes del modelo A
-     images/modeloD/  → tus 20 imagenes del modelo D
+   6 carpetas: 2 de imágenes reales, 2 del modelo A, 2 del modelo B.
+   Las carpetas dentro del repositorio deben seguir esta estructura:
+     images/real1/       → imágenes reales dataset 1
+     images/real2/       → imágenes reales dataset 2
+     images/modeloA1/    → modelo A dataset 1
+     images/modeloA2/    → modelo A dataset 2
+     images/modeloB1/    → modelo B dataset 1
+     images/modeloB2/    → modelo B dataset 2
 
-   Ejemplo: si tienes "paciente01.png" en la carpeta real,
-   pon 'paciente01.png' en el array REAL_IMAGES.
+   En el CSV de salida:
+     - image_group "real1" y "real2"   → son imágenes REALES
+     - image_group "modeloA1", "modeloA2", "modeloB1", "modeloB2" → son RECONSTRUIDAS
+   El campo "ground_truth" en el CSV lo indica explícitamente.
 */
 
-var REAL_IMAGES = [
+var REAL1_IMAGES = [
   '003_VP3_frame0283.png',
   '004_VP4_frame0008.png',
   '005_VP4_frame0016.png',
@@ -402,7 +430,10 @@ var REAL_IMAGES = [
   '012_VP9_frame0810.png',
   '014_VP12_frame0052.png',
   '014_VP12_frame0151.png',
-  '015_VP12_frame0135.png',
+  '015_VP12_frame0135.png'
+];
+
+var REAL2_IMAGES = [
   '015_VP12_frame0177.png',
   '017_VP14_frame0211.png',
   '018_VP14_frame0206.png',
@@ -413,44 +444,49 @@ var REAL_IMAGES = [
   '064_VP24_frame0052.png',
   '064_VP24_frame0527.png',
   '064_VP24_frame0740.png'
-
 ];
 
-var MODELOA_IMAGES = [
-'003_VP3_frame0100_out.png',
-'004_VP4_frame0030_out.png',
-'004_VP4_frame0815_out.png',
-'009_VP7_frame0368_out.png',
-'010_VP9_frame0148_out.png',
-'011_VP9_frame0192_out.png',
-'011_VP9_frame0429_out.png',
-'011_VP9_frame0847_out.png',
-'012_VP9_frame0124_out.png',
-'012_VP9_frame0767_out.png',
-'014_VP12_frame0581_out.png',
-'017_VP14_frame0287_out.png',
-'018_VP14_frame0255_out.png',
-'018_VP14_frame0555_out.png',
-'018_VP14_frame0916_out.png',
-'018_VP14_frame1761_out.png',
-'064_VP24_frame0149_out.png',
-'064_VP24_frame0573_out.png',
-'064_VP24_frame1378_out.png',
-'064_VP24_frame1678_out.png'
+var MODELOA1_IMAGES = [
+  '003_VP3_frame0100_out.png',
+  '004_VP4_frame0030_out.png',
+  '004_VP4_frame0815_out.png',
+  '009_VP7_frame0368_out.png',
+  '010_VP9_frame0148_out.png',
+  '011_VP9_frame0192_out.png',
+  '011_VP9_frame0429_out.png',
+  '011_VP9_frame0847_out.png',
+  '012_VP9_frame0124_out.png',
+  '012_VP9_frame0767_out.png'
 ];
 
-var MODELOD_IMAGES = [
+var MODELOA2_IMAGES = [
+  '014_VP12_frame0581_out.png',
+  '017_VP14_frame0287_out.png',
+  '018_VP14_frame0255_out.png',
+  '018_VP14_frame0555_out.png',
+  '018_VP14_frame0916_out.png',
+  '018_VP14_frame1761_out.png',
+  '064_VP24_frame0149_out.png',
+  '064_VP24_frame0573_out.png',
+  '064_VP24_frame1378_out.png',
+  '064_VP24_frame1678_out.png'
+];
+
+var MODELOB1_IMAGES = [
   '003_VP3_frame0304_out.png',
   '004_VP4_frame0288_out.png',
   '009_VP7_frame0141_out.png',
   '009_VP7_frame0368_out.png',
   '010_VP9_frame0082_out.png',
-  '010_VP9_frame0301_out.png',
   '011_VP9_frame0096_out.png',
   '011_VP9_frame0214_out.png',
   '011_VP9_frame0380_out.png',
   '011_VP9_frame0580_out.png',
-  '011_VP9_frame0894_out.png',
+  '011_VP9_frame0894_out.png'
+];
+
+var MODELOB2_IMAGES = [
+  '010_VP9_frame0301_out.png',
   '012_VP9_frame0068_out.png',
   '012_VP9_frame0307_out.png',
   '012_VP9_frame0723_out.png',
@@ -462,21 +498,51 @@ var MODELOD_IMAGES = [
   '064_VP24_frame1942_out.png'
 ];
 
+/* =============================================================
+   CONFIGURACION DE REPETICIONES
+   =============================================================
+   NUM_REPEATS: cuántas imágenes se repetirán una vez (ej: 5)
+   MIN_GAP: distancia mínima (en posiciones) entre la primera
+            aparición de una imagen y su repetición.
+            Recomendado: al menos 10-15 para 60 imágenes.
+*/
+var NUM_REPEATS  = 5;
+var MIN_GAP      = 12;
+
+/* =============================================================
+   CONFIGURACION DE GITHUB (para envío automático del CSV)
+   =============================================================
+   Para activar el envío a GitHub necesitas:
+   1. Crear un repositorio en GitHub (puede ser privado).
+   2. Generar un Personal Access Token con permiso "repo":
+      GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens
+      Selecciona el repositorio y concede permisos de Contents (Read & Write).
+   3. Rellenar los campos de abajo.
+
+   IMPORTANTE: Si este archivo es público, NO pongas el token aquí directamente.
+   En su lugar usa una variable de entorno o un servicio intermediario.
+   Para uso en local o repositorio privado, rellenar aquí es suficiente.
+*/
+var GITHUB_TOKEN  = '';             // Tu Personal Access Token de GitHub
+var GITHUB_OWNER  = '';             // Tu usuario u organización (ej: 'maria-garcia')
+var GITHUB_REPO   = '';             // Nombre del repositorio (ej: 'image-eval-results')
+var GITHUB_BRANCH = 'main';         // Rama donde guardar los CSVs
+var GITHUB_PATH   = 'results/';     // Carpeta dentro del repo (con / al final)
+
 /* ============================================================= */
 
-var TOTAL_IMAGES = 60;
+function groundTruth(group) {
+  return (group === 'real1' || group === 'real2') ? 'real' : 'reconstructed';
+}
 
 function buildImageList() {
   var list = [];
-  REAL_IMAGES.forEach(function(f) {
-    list.push({ file: 'images/real/' + f, group: 'real' });
-  });
-  MODELOA_IMAGES.forEach(function(f) {
-    list.push({ file: 'images/modeloA/' + f, group: 'modeloA' });
-  });
-  MODELOD_IMAGES.forEach(function(f) {
-    list.push({ file: 'images/modeloD/' + f, group: 'modeloD' });
-  });
+  REAL1_IMAGES.forEach(function(f)    { list.push({ file: 'images/real1/' + f,    group: 'real1'    }); });
+  REAL2_IMAGES.forEach(function(f)    { list.push({ file: 'images/real2/' + f,    group: 'real2'    }); });
+  MODELOA1_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloA1/' + f, group: 'modeloA1' }); });
+  MODELOA2_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloA2/' + f, group: 'modeloA2' }); });
+  MODELOB1_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloB1/' + f, group: 'modeloB1' }); });
+  MODELOB2_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloB2/' + f, group: 'modeloB2' }); });
   return list;
 }
 
@@ -486,6 +552,7 @@ var currentIdx   = 0;
 var responses    = [];
 var evaluatorId  = '';
 var selectedType = null;
+var totalImages  = 0;
 
 function shuffle(arr) {
   var a = arr.slice();
@@ -494,6 +561,36 @@ function shuffle(arr) {
     var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
   }
   return a;
+}
+
+/*
+  Inserta NUM_REPEATS repeticiones respetando MIN_GAP.
+  Elige imágenes al azar del array base y busca una posición
+  de inserción que esté al menos MIN_GAP posiciones por delante
+  de la primera aparición.
+*/
+function insertRepeats(base) {
+  var arr   = base.slice();
+  var total = arr.length;
+
+  // Escoge imágenes candidatas para repetir (índices en el array base original)
+  var candidates = shuffle(Array.from({length: total}, function(_, i){ return i; })).slice(0, NUM_REPEATS);
+
+  candidates.forEach(function(origIdx) {
+    var img        = arr[origIdx]; // imagen original en el array ya shuffled
+    // posición actual de esa imagen en arr
+    var firstPos   = arr.indexOf(img);
+    // rango válido para insertar: [firstPos + MIN_GAP, arr.length]
+    var minInsert  = firstPos + MIN_GAP;
+    var maxInsert  = arr.length; // al final inclusive
+    if (minInsert > maxInsert) minInsert = maxInsert; // si no hay hueco, va al final
+    var insertPos  = Math.floor(Math.random() * (maxInsert - minInsert + 1)) + minInsert;
+    // Crea copia con marca de repetición
+    var clone = { file: img.file, group: img.group, repeated: true };
+    arr.splice(insertPos, 0, clone);
+  });
+
+  return arr;
 }
 
 function buildLikertScale(containerId, name, valId) {
@@ -510,8 +607,8 @@ function buildLikertScale(containerId, name, valId) {
         document.getElementById(valId).textContent = val;
         checkReady();
       });
-      var dot = document.createElement('div');
-      dot.className   = 'likert-dot';
+      var dot       = document.createElement('div');
+      dot.className = 'likert-dot';
       dot.textContent = val;
       lbl.appendChild(inp);
       lbl.appendChild(dot);
@@ -527,17 +624,25 @@ function preloadAll(list, onDone) {
   var label  = document.getElementById('load-label');
 
   list.forEach(function(img) {
-    var el = new Image();
+    var key = img.file;
+    if (imageCache[key]) { // ya cargado (repetición)
+      loaded++;
+      fill.style.width  = Math.round((loaded / total) * 100) + '%';
+      label.textContent = loaded + ' / ' + total;
+      if (loaded === total) onDone();
+      return;
+    }
+    var el   = new Image();
     var done = function() {
       loaded++;
       fill.style.width  = Math.round((loaded / total) * 100) + '%';
       label.textContent = loaded + ' / ' + total;
-      imageCache[img.file] = el;
+      imageCache[key]   = el;
       if (loaded === total) onDone();
     };
     el.onload  = done;
     el.onerror = done;
-    el.src     = img.file;
+    el.src     = key;
   });
 }
 
@@ -546,7 +651,9 @@ function startSurvey() {
   if (!idInput) { alert('Por favor introduce tu identificador.'); return; }
 
   evaluatorId = idInput;
-  imageList   = shuffle(buildImageList());
+  var base    = shuffle(buildImageList());
+  imageList   = insertRepeats(base);
+  totalImages = imageList.length;
 
   buildLikertScale('scale-quality', 'quality', 'val-quality');
   buildLikertScale('scale-realism', 'realism', 'val-realism');
@@ -601,13 +708,13 @@ function loadImage(idx) {
 
   container.appendChild(el);
 
-  var pct = Math.round((idx / TOTAL_IMAGES) * 100);
+  var pct = Math.round((idx / totalImages) * 100);
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('pct-label').textContent     = pct + '%';
-  document.getElementById('counter-pill').textContent  = (idx + 1) + ' / ' + TOTAL_IMAGES;
+  document.getElementById('counter-pill').textContent  = (idx + 1) + ' / ' + totalImages;
 
   document.getElementById('btn-next').textContent =
-    idx === TOTAL_IMAGES - 1 ? 'Finalizar evaluacion' : 'Siguiente imagen';
+    idx === totalImages - 1 ? 'Finalizar evaluacion' : 'Siguiente imagen \u2192';
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -650,6 +757,8 @@ function submitCurrent() {
     image_index:    currentIdx + 1,
     image_file:     img.file,
     image_group:    img.group,
+    ground_truth:   groundTruth(img.group),
+    is_repeat:      img.repeated ? 'yes' : 'no',
     perceived_type: selectedType,
     quality_score:  quality,
     realism_score:  realism,
@@ -657,7 +766,7 @@ function submitCurrent() {
     timestamp:      new Date().toISOString()
   });
 
-  if (currentIdx + 1 >= TOTAL_IMAGES) {
+  if (currentIdx + 1 >= totalImages) {
     showDone();
   } else {
     var card = document.getElementById('main-card');
@@ -685,11 +794,19 @@ function showDone() {
   document.getElementById('stat-real').textContent  = nReal;
   document.getElementById('stat-recon').textContent = nRecon;
   document.getElementById('stat-avg').textContent   = avgQ;
+
+  // Deshabilitar botón GitHub si no está configurado
+  if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
+    var btn = document.getElementById('btn-upload');
+    btn.disabled = true;
+    btn.title    = 'Configura GITHUB_TOKEN, GITHUB_OWNER y GITHUB_REPO en el código.';
+  }
 }
 
-function downloadCSV() {
+function buildCSV() {
   var header = ['evaluator_id','image_index','image_file','image_group',
-                'perceived_type','quality_score','realism_score','color_score','timestamp'];
+                'ground_truth','is_repeat','perceived_type',
+                'quality_score','realism_score','color_score','timestamp'];
 
   var rows = responses.map(function(r) {
     return header.map(function(k) {
@@ -698,7 +815,11 @@ function downloadCSV() {
     }).join(',');
   });
 
-  var csv    = [header.join(',')].concat(rows).join('\n');
+  return [header.join(',')].concat(rows).join('\n');
+}
+
+function downloadCSV() {
+  var csv    = buildCSV();
   var blob   = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   var url    = URL.createObjectURL(blob);
   var a      = document.createElement('a');
@@ -709,6 +830,57 @@ function downloadCSV() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+function uploadToGitHub() {
+  var status = document.getElementById('upload-status');
+  var btn    = document.getElementById('btn-upload');
+  status.className   = 'upload-status';
+  status.textContent = '';
+
+  var csv    = buildCSV();
+  var safeId = evaluatorId.replace(/[^a-zA-Z0-9_-]/g, '_');
+  var fname  = 'survey_' + safeId + '_' + Date.now() + '.csv';
+  var path   = GITHUB_PATH + fname;
+  var url    = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + path;
+
+  // Codifica el CSV en base64
+  var b64 = btoa(unescape(encodeURIComponent(csv)));
+
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + GITHUB_TOKEN,
+      'Content-Type':  'application/json',
+      'Accept':        'application/vnd.github+json'
+    },
+    body: JSON.stringify({
+      message: 'Survey result: ' + fname,
+      content: b64,
+      branch:  GITHUB_BRANCH
+    })
+  })
+  .then(function(res) {
+    if (res.status === 201) {
+      status.textContent = '\u2713 Archivo enviado correctamente a GitHub: ' + path;
+      status.className   = 'upload-status ok';
+    } else {
+      return res.json().then(function(data) {
+        throw new Error(data.message || 'Error HTTP ' + res.status);
+      });
+    }
+  })
+  .catch(function(err) {
+    status.textContent = '\u26a0 Error al enviar: ' + err.message;
+    status.className   = 'upload-status err';
+  })
+  .finally(function() {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg> Enviar a GitHub';
+  });
 }
 </script>
 </body>
