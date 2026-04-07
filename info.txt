@@ -1,2 +1,4 @@
+1 = Piccolo Dataset
+2 = Real Colon Dataset
 Modelo A = RealESRGAN_x4plus
 Modelo B = Modelo_D
