@@ -420,7 +420,7 @@
    El campo "ground_truth" en el CSV lo indica explícitamente.
 */
 
-var REAL1_IMAGES = [
+var REAL_IMAGES = [
   '003_VP3_frame0283.png',
   '004_VP4_frame0008.png',
   '005_VP4_frame0016.png',
@@ -446,7 +446,7 @@ var REAL2_IMAGES = [
   '064_VP24_frame0740.png'
 ];
 
-var MODELOA1_IMAGES = [
+var MODELOA_IMAGES = [
   '003_VP3_frame0100_out.png',
   '004_VP4_frame0030_out.png',
   '004_VP4_frame0815_out.png',
@@ -537,12 +537,12 @@ function groundTruth(group) {
 
 function buildImageList() {
   var list = [];
-  REAL1_IMAGES.forEach(function(f)    { list.push({ file: 'images/real1/' + f,    group: 'real1'    }); });
+  REAL_IMAGES.forEach(function(f)    { list.push({ file: 'images/real/' + f,    group: 'real'    }); });
   REAL2_IMAGES.forEach(function(f)    { list.push({ file: 'images/real2/' + f,    group: 'real2'    }); });
-  MODELOA1_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloA1/' + f, group: 'modeloA1' }); });
+  MODELOA_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloA/' + f, group: 'modeloA' }); });
   MODELOA2_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloA2/' + f, group: 'modeloA2' }); });
-  MODELOB1_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloB1/' + f, group: 'modeloB1' }); });
-  MODELOB2_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloB2/' + f, group: 'modeloB2' }); });
+  MODELOD_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloD/' + f, group: 'modeloD' }); });
+  MODELOD2_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloD2/' + f, group: 'modeloD2' }); });
   return list;
 }
 
