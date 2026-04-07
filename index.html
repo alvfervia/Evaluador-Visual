@@ -474,7 +474,7 @@ var MODELOA2_IMAGES = [
   
 ];
 
-var MODELOB1_IMAGES = [
+var MODELOD_IMAGES = [
   '003_VP3_frame0304_out.png',
   '004_VP4_frame0288_out.png',
   /*'009_VP7_frame0141_out.png',
@@ -497,7 +497,7 @@ var MODELOB1_IMAGES = [
   '064_VP24_frame1942_out.png'*/
 ];
 
-var MODELOB2_IMAGES = [
+var MODELOD2_IMAGES = [
   
 ];
 
@@ -535,7 +535,7 @@ var GITHUB_PATH   = 'results/';     // Carpeta dentro del repo (con / al final)
 /* ============================================================= */
 
 function groundTruth(group) {
-  return (group === 'real1' || group === 'real2') ? 'real' : 'reconstructed';
+  return (group === 'real' || group === 'real2') ? 'real' : 'reconstructed';
 }
 
 function buildImageList() {
