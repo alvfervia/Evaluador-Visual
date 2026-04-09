@@ -643,30 +643,7 @@ function downloadCSV() {
   URL.revokeObjectURL(url);
 }
 
-function uploadResults() {
-  var googleScriptUrl = 'https://script.google.com/macros/s/AKfycbygQ8AEH2Pf8HSlo5MRRHNLFDJ_8dphdl8lIEt8X9QLZNaENYpuz88vtWfE1rRcxj-dzA/exec';
-  
-  document.getElementById('done-msg').textContent = 'Guardando resultados en la nube...';
-  
-  fetch(googleScriptUrl, {
-    method: 'POST',
-    body: JSON.stringify(responses),
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' } // text/plain evita problemas de CORS en Apps Script
-  })
-  .then(response => response.json())
-  .then(data => {
-    var status = document.getElementById('upload-status');
-    status.className = 'upload-status ok';
-    status.innerHTML = '¡Resultados guardados con éxito!';
-    document.getElementById('done-msg').textContent = 'Gracias por participar.';
-  })
-  .catch(error => {
-    var status = document.getElementById('upload-status');
-    status.className = 'upload-status err';
-    status.innerHTML = 'Error al guardar. Por favor, descarga el CSV y envíalo manualmente.';
-    document.getElementById('btn-retry-upload').style.display = 'flex';
-  });
-}
+
   var fname  = 'survey_' + evaluatorId.replace(/[^a-zA-Z0-9_-]/g,'_') + '_' + Date.now() + '.csv';
   var path   = GITHUB_PATH + fname;
   var apiUrl = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + path;
