@@ -593,6 +593,12 @@ var GITHUB_BRANCH = 'main';         // Rama donde guardar los CSVs
 var GITHUB_PATH   = 'results/';     // Carpeta dentro del repo (con / al final)
 
 /* ============================================================= */
+function changeExp(delta) {
+  var inp = document.getElementById('evaluator-exp');
+  var v   = parseInt(inp.value) || 0;
+  v = Math.max(0, Math.min(60, v + delta));
+  inp.value = v;
+}
 
 function groundTruth(group) {
   return (group === 'real' || group === 'real2') ? 'real' : 'reconstructed';
@@ -600,123 +606,78 @@ function groundTruth(group) {
 
 function buildImageList() {
   var list = [];
-  REAL_IMAGES.forEach(function(f)    { list.push({ file: 'images/real/' + f,    group: 'real'    }); });
-  REAL2_IMAGES.forEach(function(f)    { list.push({ file: 'images/real2/' + f,    group: 'real2'    }); });
-  MODELOA_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloA/' + f, group: 'modeloA' }); });
-  MODELOA2_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloA2/' + f, group: 'modeloA2' }); });
-  MODELOD_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloD/' + f, group: 'modeloD' }); });
-  MODELOD2_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloD2/' + f, group: 'modeloD2' }); });
+  REAL_IMAGES.forEach(function(f)    { list.push({ file: 'images/real/'     + f, group: 'real'     }); });
+  REAL2_IMAGES.forEach(function(f)   { list.push({ file: 'images/real2/'    + f, group: 'real2'    }); });
+  MODELOA_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloA/'  + f, group: 'modeloA'  }); });
+  MODELOA2_IMAGES.forEach(function(f){ list.push({ file: 'images/modeloA2/' + f, group: 'modeloA2' }); });
+  MODELOD_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloD/'  + f, group: 'modeloD'  }); });
+  MODELOD2_IMAGES.forEach(function(f){ list.push({ file: 'images/modeloD2/' + f, group: 'modeloD2' }); });
   return list;
 }
 
-var imageList    = [];
-var imageCache   = {};
-var currentIdx   = 0;
-var responses    = [];
-var evaluatorId  = '';
-var selectedType = null;
-var totalImages  = 0;
+var imageList = [], imageCache = {}, currentIdx = 0, responses = [];
+var evaluatorId = '', evaluatorExp = 0, selectedType = null, totalImages = 0;
 
 function shuffle(arr) {
   var a = arr.slice();
   for (var i = a.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t;
   }
   return a;
 }
 
-/*
-  Inserta NUM_REPEATS repeticiones respetando MIN_GAP.
-  Elige imágenes al azar del array base y busca una posición
-  de inserción que esté al menos MIN_GAP posiciones por delante
-  de la primera aparición.
-*/
 function insertRepeats(base) {
-  var arr   = base.slice();
-  var total = arr.length;
-
-  // Escoge imágenes candidatas para repetir (índices en el array base original)
-  var candidates = shuffle(Array.from({length: total}, function(_, i){ return i; })).slice(0, NUM_REPEATS);
-
-  candidates.forEach(function(origIdx) {
-    var img        = arr[origIdx]; // imagen original en el array ya shuffled
-    // posición actual de esa imagen en arr
-    var firstPos   = arr.indexOf(img);
-    // rango válido para insertar: [firstPos + MIN_GAP, arr.length]
-    var minInsert  = firstPos + MIN_GAP;
-    var maxInsert  = arr.length; // al final inclusive
-    if (minInsert > maxInsert) minInsert = maxInsert; // si no hay hueco, va al final
-    var insertPos  = Math.floor(Math.random() * (maxInsert - minInsert + 1)) + minInsert;
-    // Crea copia con marca de repetición
-    var clone = { file: img.file, group: img.group, repeated: true };
-    arr.splice(insertPos, 0, clone);
+  var arr  = base.slice();
+  var n    = Math.min(NUM_REPEATS, arr.length);
+  shuffle(arr.map(function(_, i){ return i; })).slice(0, n).forEach(function(origIdx) {
+    var img    = arr[origIdx];
+    var first  = arr.indexOf(img);
+    var minIns = first + MIN_GAP;
+    var maxIns = arr.length;
+    if (minIns > maxIns) minIns = maxIns;
+    var pos = Math.floor(Math.random() * (maxIns - minIns + 1)) + minIns;
+    arr.splice(pos, 0, { file: img.file, group: img.group, repeated: true });
   });
-
   return arr;
 }
 
-function buildLikertScale(containerId, name, valId) {
-  var container = document.getElementById(containerId);
-  container.innerHTML = '';
+function buildLikertScale(cid, name, vid) {
+  var c = document.getElementById(cid); c.innerHTML = '';
   for (var v = 1; v <= 7; v++) {
     (function(val) {
       var lbl = document.createElement('label');
       var inp = document.createElement('input');
-      inp.type  = 'radio';
-      inp.name  = name;
-      inp.value = val;
-      inp.addEventListener('change', function() {
-        document.getElementById(valId).textContent = val;
-        checkReady();
-      });
-      var dot       = document.createElement('div');
-      dot.className = 'likert-dot';
-      dot.textContent = val;
-      lbl.appendChild(inp);
-      lbl.appendChild(dot);
-      container.appendChild(lbl);
+      inp.type = 'radio'; inp.name = name; inp.value = val;
+      inp.addEventListener('change', function() { document.getElementById(vid).textContent = val; checkReady(); });
+      var dot = document.createElement('div'); dot.className = 'likert-dot'; dot.textContent = val;
+      lbl.appendChild(inp); lbl.appendChild(dot); c.appendChild(lbl);
     })(v);
   }
 }
 
 function preloadAll(list, onDone) {
-  var loaded = 0;
-  var total  = list.length;
-  var fill   = document.getElementById('load-fill');
-  var label  = document.getElementById('load-label');
-
+  var loaded = 0, total = list.length;
+  var fill = document.getElementById('load-fill'), lbl = document.getElementById('load-label');
+  if (total === 0) { onDone(); return; }
   list.forEach(function(img) {
     var key = img.file;
-    if (imageCache[key]) { // ya cargado (repetición)
-      loaded++;
-      fill.style.width  = Math.round((loaded / total) * 100) + '%';
-      label.textContent = loaded + ' / ' + total;
-      if (loaded === total) onDone();
-      return;
-    }
-    var el   = new Image();
-    var done = function() {
-      loaded++;
-      fill.style.width  = Math.round((loaded / total) * 100) + '%';
-      label.textContent = loaded + ' / ' + total;
-      imageCache[key]   = el;
-      if (loaded === total) onDone();
-    };
-    el.onload  = done;
-    el.onerror = done;
-    el.src     = key;
+    if (imageCache[key]) { loaded++; fill.style.width = Math.round(loaded/total*100)+'%'; lbl.textContent = loaded+' / '+total; if (loaded===total) onDone(); return; }
+    var el = new Image();
+    var done = function() { loaded++; fill.style.width = Math.round(loaded/total*100)+'%'; lbl.textContent = loaded+' / '+total; imageCache[key] = el; if (loaded===total) onDone(); };
+    el.onload = done; el.onerror = done; el.src = key;
   });
 }
 
 function startSurvey() {
-  var idInput = document.getElementById('evaluator-id').value.trim();
-  if (!idInput) { alert('Por favor introduce tu identificador.'); return; }
+  var id  = document.getElementById('evaluator-id').value.trim();
+  var exp = parseInt(document.getElementById('evaluator-exp').value);
+  if (!id)             { alert('Por favor introduce tu identificador.'); return; }
+  if (isNaN(exp) || exp < 0) { alert('Por favor indica los años de experiencia (mínimo 0).'); return; }
 
-  evaluatorId = idInput;
-  var base    = shuffle(buildImageList());
-  imageList   = insertRepeats(base);
-  totalImages = imageList.length;
+  evaluatorId  = id;
+  evaluatorExp = exp;
+  imageList    = insertRepeats(shuffle(buildImageList()));
+  totalImages  = imageList.length;
 
   buildLikertScale('scale-quality', 'quality', 'val-quality');
   buildLikertScale('scale-realism', 'realism', 'val-realism');
@@ -733,216 +694,158 @@ function startSurvey() {
 }
 
 function loadImage(idx) {
-  var img = imageList[idx];
-  currentIdx   = idx;
-  selectedType = null;
-
+  var img = imageList[idx]; currentIdx = idx; selectedType = null;
   document.getElementById('btn-real').className  = 'type-btn';
   document.getElementById('btn-recon').className = 'type-btn';
-  document.querySelectorAll('input[type="radio"]').forEach(function(r) { r.checked = false; });
-  document.getElementById('val-quality').textContent = '--';
-  document.getElementById('val-realism').textContent = '--';
-  document.getElementById('val-color').textContent   = '--';
+  document.querySelectorAll('input[type="radio"]').forEach(function(r){ r.checked = false; });
+  ['val-quality','val-realism','val-color'].forEach(function(id){ document.getElementById(id).textContent = '--'; });
   document.getElementById('error-msg').classList.remove('show');
   document.getElementById('btn-next').disabled = true;
-
-  document.getElementById('img-label').textContent = 'IMG ' + String(idx + 1).padStart(2, '0');
+  document.getElementById('img-label').textContent = 'IMG ' + String(idx+1).padStart(2,'0');
 
   var container   = document.getElementById('img-container');
-  var existing    = container.querySelector('img');
-  if (existing) existing.remove();
-
+  var existing    = container.querySelector('img'); if (existing) existing.remove();
   var placeholder = container.querySelector('.img-placeholder');
+  var el          = new Image(); el.style.cssText = 'width:100%;height:100%;object-fit:contain;'; el.alt = 'Imagen '+(idx+1);
   var cached      = imageCache[img.file];
-  var el          = new Image();
-  el.style.width     = '100%';
-  el.style.height    = '100%';
-  el.style.objectFit = 'contain';
-  el.alt = 'Imagen ' + (idx + 1);
-
-  if (cached && cached.complete && cached.naturalWidth > 0) {
-    el.src = cached.src;
-    placeholder.style.display = 'none';
-  } else {
-    el.src = img.file;
-    placeholder.style.display = 'flex';
-    el.onload = function() { placeholder.style.display = 'none'; };
-  }
-
+  if (cached && cached.complete && cached.naturalWidth > 0) { el.src = cached.src; placeholder.style.display = 'none'; }
+  else { el.src = img.file; placeholder.style.display = 'flex'; el.onload = function(){ placeholder.style.display = 'none'; }; }
   container.appendChild(el);
 
-  var pct = Math.round((idx / totalImages) * 100);
+  var pct = Math.round(idx / totalImages * 100);
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('pct-label').textContent     = pct + '%';
-  document.getElementById('counter-pill').textContent  = (idx + 1) + ' / ' + totalImages;
-
-  document.getElementById('btn-next').textContent =
-    idx === totalImages - 1 ? 'Finalizar evaluacion' : 'Siguiente imagen \u2192';
-
+  document.getElementById('counter-pill').textContent  = (idx+1) + ' / ' + totalImages;
+  document.getElementById('btn-next').textContent      = idx === totalImages-1 ? 'Finalizar evaluación' : 'Siguiente imagen →';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function selectType(type) {
   selectedType = type;
-  document.getElementById('btn-real').className =
-    type === 'real' ? 'type-btn selected-real' : 'type-btn';
-  document.getElementById('btn-recon').className =
-    type === 'reconstructed' ? 'type-btn selected-recon' : 'type-btn';
+  document.getElementById('btn-real').className  = type === 'real'          ? 'type-btn selected-real'  : 'type-btn';
+  document.getElementById('btn-recon').className = type === 'reconstructed' ? 'type-btn selected-recon' : 'type-btn';
   checkReady();
 }
 
 function getRadioVal(name) {
-  var sel = document.querySelector('input[name="' + name + '"]:checked');
-  return sel ? parseInt(sel.value) : null;
+  var s = document.querySelector('input[name="'+name+'"]:checked');
+  return s ? parseInt(s.value) : null;
 }
 
 function checkReady() {
-  var ok = selectedType !== null &&
-           getRadioVal('quality') !== null &&
-           getRadioVal('realism') !== null &&
-           getRadioVal('color')   !== null;
-  document.getElementById('btn-next').disabled = !ok;
+  document.getElementById('btn-next').disabled = !(
+    selectedType && getRadioVal('quality') !== null && getRadioVal('realism') !== null && getRadioVal('color') !== null
+  );
 }
 
 function submitCurrent() {
-  var quality = getRadioVal('quality');
-  var realism = getRadioVal('realism');
-  var color   = getRadioVal('color');
-
-  if (!selectedType || quality === null || realism === null || color === null) {
-    document.getElementById('error-msg').classList.add('show');
-    return;
+  var q = getRadioVal('quality'), r = getRadioVal('realism'), c = getRadioVal('color');
+  if (!selectedType || q===null || r===null || c===null) {
+    document.getElementById('error-msg').classList.add('show'); return;
   }
-
   var img = imageList[currentIdx];
   responses.push({
-    evaluator_id:   evaluatorId,
-    image_index:    currentIdx + 1,
-    image_file:     img.file,
-    image_group:    img.group,
-    ground_truth:   groundTruth(img.group),
-    is_repeat:      img.repeated ? 'yes' : 'no',
-    perceived_type: selectedType,
-    quality_score:  quality,
-    realism_score:  realism,
-    color_score:    color,
-    timestamp:      new Date().toISOString()
+    evaluator_id:         evaluatorId,
+    evaluator_experience: evaluatorExp,
+    image_index:          currentIdx + 1,
+    image_file:           img.file,
+    image_group:          img.group,
+    ground_truth:         groundTruth(img.group),
+    is_repeat:            img.repeated ? 'yes' : 'no',
+    perceived_type:       selectedType,
+    quality_score:        q,
+    realism_score:        r,
+    color_score:          c,
+    timestamp:            new Date().toISOString()
   });
-
-  if (currentIdx + 1 >= totalImages) {
-    showDone();
-  } else {
-    var card = document.getElementById('main-card');
-    card.style.opacity    = '0';
-    card.style.transform  = 'translateY(-16px)';
-    card.style.transition = 'opacity .2s, transform .2s';
-    setTimeout(function() {
-      card.style.opacity    = '';
-      card.style.transform  = '';
-      card.style.transition = '';
-      loadImage(currentIdx + 1);
-    }, 200);
-  }
+  if (currentIdx + 1 >= totalImages) { showDone(); return; }
+  var card = document.getElementById('main-card');
+  card.style.cssText = 'opacity:0;transform:translateY(-16px);transition:opacity .2s,transform .2s';
+  setTimeout(function(){ card.style.cssText = ''; loadImage(currentIdx+1); }, 200);
 }
 
 function showDone() {
   document.getElementById('survey').style.display = 'none';
   document.getElementById('done').style.display   = 'flex';
 
-  var nReal  = responses.filter(function(r) { return r.perceived_type === 'real'; }).length;
-  var nRecon = responses.filter(function(r) { return r.perceived_type === 'reconstructed'; }).length;
-  var sum    = responses.reduce(function(s, r) { return s + r.quality_score; }, 0);
-  var avgQ   = (sum / responses.length).toFixed(2);
-
+  var nReal = responses.filter(function(r){ return r.perceived_type==='real'; }).length;
+  var nRec  = responses.filter(function(r){ return r.perceived_type==='reconstructed'; }).length;
+  var avgQ  = (responses.reduce(function(s,r){ return s+r.quality_score; },0)/responses.length).toFixed(2);
   document.getElementById('stat-real').textContent  = nReal;
-  document.getElementById('stat-recon').textContent = nRecon;
+  document.getElementById('stat-recon').textContent = nRec;
   document.getElementById('stat-avg').textContent   = avgQ;
 
-  // Deshabilitar botón GitHub si no está configurado
-  if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
-    var btn = document.getElementById('btn-upload');
-    btn.disabled = true;
-    btn.title    = 'Configura GITHUB_TOKEN, GITHUB_OWNER y GITHUB_REPO en el código.';
-  }
+  /* Subida automática al terminar */
+  uploadToGitHub();
 }
 
 function buildCSV() {
-  var header = ['evaluator_id','image_index','image_file','image_group',
-                'ground_truth','is_repeat','perceived_type',
-                'quality_score','realism_score','color_score','timestamp'];
-
-  var rows = responses.map(function(r) {
-    return header.map(function(k) {
+  var h = ['evaluator_id','evaluator_experience','image_index','image_file','image_group',
+           'ground_truth','is_repeat','perceived_type','quality_score','realism_score','color_score','timestamp'];
+  var rows = responses.map(function(r){
+    return h.map(function(k){
       var v = String(r[k] !== undefined ? r[k] : '');
-      return (v.indexOf(',') >= 0 || v.indexOf('"') >= 0) ? '"' + v.replace(/"/g, '""') + '"' : v;
+      return (v.indexOf(',')>=0 || v.indexOf('"')>=0) ? '"'+v.replace(/"/g,'""')+'"' : v;
     }).join(',');
   });
-
-  return [header.join(',')].concat(rows).join('\n');
+  return [h.join(',')].concat(rows).join('\n');
 }
 
 function downloadCSV() {
-  var csv    = buildCSV();
-  var blob   = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  var url    = URL.createObjectURL(blob);
-  var a      = document.createElement('a');
-  var safeId = evaluatorId.replace(/[^a-zA-Z0-9_-]/g, '_');
-  a.href     = url;
-  a.download = 'survey_' + safeId + '_' + Date.now() + '.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  var blob = new Blob([buildCSV()], { type: 'text/csv;charset=utf-8;' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url;
+  a.download = 'survey_' + evaluatorId.replace(/[^a-zA-Z0-9_-]/g,'_') + '_' + Date.now() + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 
 function uploadToGitHub() {
-  var status = document.getElementById('upload-status');
-  var btn    = document.getElementById('btn-upload');
-  status.className   = 'upload-status';
-  status.textContent = '';
+  var status  = document.getElementById('upload-status');
+  var retryBtn = document.getElementById('btn-retry-upload');
+  var doneMsg = document.getElementById('done-msg');
 
-  var csv    = buildCSV();
-  var safeId = evaluatorId.replace(/[^a-zA-Z0-9_-]/g, '_');
-  var fname  = 'survey_' + safeId + '_' + Date.now() + '.csv';
-  var path   = GITHUB_PATH + fname;
-  var url    = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + path;
+  status.className   = 'upload-status info';
+  status.textContent = '⏳ Enviando resultados al repositorio…';
+  retryBtn.style.display = 'none';
 
-  // Codifica el CSV en base64
-  var b64 = btoa(unescape(encodeURIComponent(csv)));
+  if (!GITHUB_TOKEN) {
+    status.textContent = '⚠ No hay token configurado. Descarga el CSV manualmente.';
+    status.className   = 'upload-status err';
+    doneMsg.textContent = 'Has completado la evaluación. Descarga el CSV y entrégaselo al investigador.';
+    return;
+  }
 
-  btn.disabled = true;
-  btn.textContent = 'Enviando...';
+  var fname = 'survey_' + evaluatorId.replace(/[^a-zA-Z0-9_-]/g,'_') + '_' + Date.now() + '.csv';
+  var path  = GITHUB_PATH + fname;
+  var apiUrl = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + path;
+  var b64   = btoa(unescape(encodeURIComponent(buildCSV())));
 
-  fetch(url, {
+  fetch(apiUrl, {
     method: 'PUT',
     headers: {
       'Authorization': 'token ' + GITHUB_TOKEN,
       'Content-Type':  'application/json',
       'Accept':        'application/vnd.github+json'
     },
-    body: JSON.stringify({
-      message: 'Survey result: ' + fname,
-      content: b64,
-      branch:  GITHUB_BRANCH
-    })
+    body: JSON.stringify({ message: 'Survey result: ' + fname, content: b64, branch: GITHUB_BRANCH })
   })
   .then(function(res) {
     if (res.status === 201) {
-      status.textContent = '\u2713 Archivo enviado correctamente a GitHub: ' + path;
-      status.className   = 'upload-status ok';
+      doneMsg.textContent     = '¡Resultados guardados! Puedes cerrar esta página.';
+      status.textContent      = '✓ Guardado correctamente en results/' + fname;
+      status.className        = 'upload-status ok';
+      retryBtn.style.display  = 'none';
     } else {
-      return res.json().then(function(data) {
-        throw new Error(data.message || 'Error HTTP ' + res.status);
-      });
+      return res.json().then(function(d){ throw new Error(d.message || 'HTTP ' + res.status); });
     }
   })
   .catch(function(err) {
-    status.textContent = '\u26a0 Error al enviar: ' + err.message;
-    status.className   = 'upload-status err';
-  })
-  .finally(function() {
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg> Enviar a GitHub';
+    doneMsg.textContent    = 'No se pudo guardar automáticamente. Descarga el CSV y entrégaselo al investigador.';
+    status.textContent     = '⚠ Error al guardar: ' + err.message + '. Usa el botón "Descargar CSV" como alternativa.';
+    status.className       = 'upload-status err';
+    retryBtn.style.display = 'flex';
   });
 }
 </script>
