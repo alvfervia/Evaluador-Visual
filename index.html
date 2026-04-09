@@ -21,17 +21,13 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   }
 
-  /* ── INTRO ── */
   #intro { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; text-align: center; animation: fadeIn .6s ease; }
-
   .intro-badge { font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: .35rem .9rem; border-radius: 2rem; margin-bottom: 2rem; }
-
   #intro h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); font-weight: 800; line-height: 1.05; max-width: 700px; margin-bottom: 1.2rem; }
   #intro h1 span { color: var(--accent); }
   #intro > p { color: var(--muted); max-width: 500px; line-height: 1.7; font-size: .95rem; margin-bottom: 2.5rem; }
 
   .intro-fields { width: 100%; max-width: 360px; margin-bottom: 2rem; display: flex; flex-direction: column; gap: .75rem; }
-
   .intro-fields input {
     background: var(--surface); border: 1px solid var(--border);
     color: var(--text); padding: .85rem 1.1rem; border-radius: .5rem;
@@ -41,10 +37,8 @@
   .intro-fields input:focus { border-color: var(--accent); }
 
   .exp-label { font-family: 'DM Mono', monospace; font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: left; padding-left: .1rem; }
-
   .exp-row { display: flex; align-items: center; gap: .75rem; background: var(--surface); border: 1px solid var(--border); border-radius: .5rem; padding: .75rem 1.1rem; transition: border-color .2s; }
   .exp-row:focus-within { border-color: var(--accent); }
-
   .exp-row input[type="number"] {
     background: transparent; border: none; color: var(--text);
     font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
@@ -52,9 +46,7 @@
   }
   .exp-row input[type="number"]::-webkit-inner-spin-button,
   .exp-row input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-
   .exp-unit { font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--muted); white-space: nowrap; }
-
   .exp-btns { display: flex; gap: .3rem; margin-left: auto; }
   .exp-btns button { background: var(--surface2); border: 1px solid var(--border); color: var(--text); width: 32px; height: 32px; border-radius: .35rem; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color .15s, color .15s; line-height: 1; }
   .exp-btns button:hover { border-color: var(--accent); color: var(--accent); }
@@ -62,7 +54,6 @@
   .btn-start { background: var(--accent); color: #0e0e0f; border: none; padding: 1rem 2.5rem; border-radius: .5rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; letter-spacing: .05em; transition: transform .15s, box-shadow .15s; }
   .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
 
-  /* ── LOADING ── */
   #loading { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; text-align: center; animation: fadeIn .4s ease; }
   #loading h2 { font-size: 2.2rem; font-weight: 800; margin: 1.5rem 0 .75rem; }
   #loading h2 span { color: var(--accent); }
@@ -71,7 +62,6 @@
   #load-fill { height: 100%; background: var(--accent); border-radius: 4px; width: 0%; transition: width .2s ease; }
   #load-label { font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--muted); }
 
-  /* ── SURVEY ── */
   #survey { display: none; animation: fadeIn .4s ease; }
   .survey-header { position: sticky; top: 0; z-index: 10; background: rgba(14,14,15,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
   .survey-logo { font-weight: 800; font-size: 1rem; }
@@ -117,11 +107,9 @@
   .btn-next { background: var(--accent); color: #0e0e0f; border: none; padding: .95rem; border-radius: .5rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem; cursor: pointer; width: 100%; transition: transform .15s, box-shadow .15s, opacity .2s; letter-spacing: .04em; }
   .btn-next:disabled { opacity: .35; cursor: not-allowed; }
   .btn-next:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
-
   .error-msg { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--recon-color); text-align: center; display: none; }
   .error-msg.show { display: block; }
 
-  /* ── DONE ── */
   #done { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; text-align: center; animation: fadeIn .5s ease; }
   .done-icon { width: 72px; height: 72px; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1.5rem; animation: popIn .4s cubic-bezier(.34,1.56,.64,1); }
   @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -135,15 +123,9 @@
   .done-stat-label { font-family: 'DM Mono', monospace; font-size: .65rem; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
 
   .done-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1rem; }
-
-  .btn-primary, .btn-secondary {
-    border: none; padding: 1rem 2rem; border-radius: .5rem;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem;
-    cursor: pointer; display: flex; align-items: center; gap: .5rem;
-    transition: transform .15s, box-shadow .15s;
-  }
-  .btn-primary   { background: var(--accent); color: #0e0e0f; }
-  .btn-primary:hover   { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
+  .btn-primary, .btn-secondary { border: none; padding: 1rem 2rem; border-radius: .5rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem; cursor: pointer; display: flex; align-items: center; gap: .5rem; transition: transform .15s, box-shadow .15s; }
+  .btn-primary { background: var(--accent); color: #0e0e0f; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
   .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
   .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -166,7 +148,6 @@
 
   <div class="intro-fields">
     <input type="text" id="evaluator-id" placeholder="Tu identificador (ej. EV-01)" autocomplete="off">
-
     <div class="exp-label">A&ntilde;os de experiencia cl&iacute;nica</div>
     <div class="exp-row">
       <input type="number" id="evaluator-exp" value="0" min="0" max="60" step="1" inputmode="numeric">
@@ -273,19 +254,18 @@
 
 <script>
 /* =============================================================
-   IMÁGENES — añade aquí todos tus archivos por carpeta
+   IMÁGENES
    Carpetas en el repositorio:
      images/real/       images/real2/
      images/modeloA/    images/modeloA2/
      images/modeloD/    images/modeloD2/
-   En el CSV: real/real2 → ground_truth "real"
-              resto      → ground_truth "reconstructed"
+   ground_truth en CSV: real/real2 → "real" | resto → "reconstructed"
 ============================================================= */
 var REAL_IMAGES = [
-  var REAL_IMAGES = [
   '003_VP3_frame0283.png',
   '004_VP4_frame0008.png',
-  '005_VP4_frame0016.png'/*,
+  '005_VP4_frame0016.png'
+  /*,
   '009_VP7_frame0189.png',
   '009_VP7_frame0515.png',
   '011_VP9_frame0170.png',
@@ -302,14 +282,16 @@ var REAL_IMAGES = [
   '018_VP14_frame2112.png',
   '064_VP24_frame0052.png',
   '064_VP24_frame0527.png',
-  '064_VP24_frame0740.png'*/
+  '064_VP24_frame0740.png'
+  */
 ];
 
 var REAL2_IMAGES = [
   '001-004_1263.jpg',
   '001-004_1333.jpg',
   '001-004_1845.jpg'
-  /* '001-004_2049.jpg',
+  /*,
+  '001-004_2049.jpg',
   '001-004_3228.jpg',
   '001-004_3446.jpg',
   '001-004_3584.jpg',
@@ -326,13 +308,15 @@ var REAL2_IMAGES = [
   '001-008_7058.jpg',
   '001-008_7837.jpg',
   '001-008_9021.jpg',
-  '001-008_9797.jpg'  */
+  '001-008_9797.jpg'
+  */
 ];
 
 var MODELOA_IMAGES = [
   '003_VP3_frame0100_out.png',
   '004_VP4_frame0030_out.png'
-  /*'004_VP4_frame0815_out.png',
+  /*,
+  '004_VP4_frame0815_out.png',
   '009_VP7_frame0368_out.png',
   '010_VP9_frame0148_out.png',
   '011_VP9_frame0192_out.png',
@@ -349,13 +333,15 @@ var MODELOA_IMAGES = [
   '064_VP24_frame0149_out.png',
   '064_VP24_frame0573_out.png',
   '064_VP24_frame1378_out.png',
-  '064_VP24_frame1678_out.png'*/
+  '064_VP24_frame1678_out.png'
+  */
 ];
 
 var MODELOA2_IMAGES = [
   '001-004_1263_out.jpg',
   '001-004_1333_out.jpg'
-  /*  '001-004_1845_out.jpg',
+  /*,
+  '001-004_1845_out.jpg',
   '001-004_2049_out.jpg',
   '001-004_3228_out.jpg',
   '001-004_3446_out.jpg',
@@ -373,13 +359,15 @@ var MODELOA2_IMAGES = [
   '001-008_7058_out.jpg',
   '001-008_7837_out.jpg',
   '001-008_9021_out.jpg',
-  '001-008_9797_out.jpg' */
+  '001-008_9797_out.jpg'
+  */
 ];
 
 var MODELOD_IMAGES = [
   '003_VP3_frame0304_out.png',
   '004_VP4_frame0288_out.png'
-  /*'009_VP7_frame0141_out.png',
+  /*,
+  '009_VP7_frame0141_out.png',
   '009_VP7_frame0368_out.png',
   '010_VP9_frame0082_out.png',
   '011_VP9_frame0096_out.png',
@@ -396,13 +384,15 @@ var MODELOD_IMAGES = [
   '018_VP14_frame0916_out.png',
   '018_VP14_frame1925_out.png',
   '064_VP24_frame0479_out.png',
-  '064_VP24_frame1942_out.png'*/
+  '064_VP24_frame1942_out.png'
+  */
 ];
 
 var MODELOD2_IMAGES = [
   '001-004_1263_out.jpg',
   '001-004_1333_out.jpg'
-  /*  '001-004_1845_out.jpg',
+  /*,
+  '001-004_1845_out.jpg',
   '001-004_2049_out.jpg',
   '001-004_3228_out.jpg',
   '001-004_3446_out.jpg',
@@ -420,7 +410,8 @@ var MODELOD2_IMAGES = [
   '001-008_7058_out.jpg',
   '001-008_7837_out.jpg',
   '001-008_9021_out.jpg',
-  '001-008_9797_out.jpg' */
+  '001-008_9797_out.jpg'
+  */
 ];
 
 /* =============================================================
@@ -432,13 +423,12 @@ var NUM_REPEATS = 5;
 var MIN_GAP     = 12;
 
 /* =============================================================
-   WORKER URL — único valor que necesitas configurar
-   Pega aquí la URL de tu Cloudflare Worker.
-   Cualquiera con el link del evaluador podrá subir resultados
-   sin ver ni tocar ningún token.
-   Ejemplo: 'https://image-eval-upload.tu-usuario.workers.dev'
+   GITHUB
+   Token con permisos solo de escritura en este repo.
+   Cualquier evaluador puede subir su resultado automáticamente.
+   Sustituye el valor vacío por tu token tras generarlo.
 ============================================================= */
-var GITHUB_TOKEN  = '';           
+var GITHUB_TOKEN  = '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';            /* <-- pega aquí tu token */
 var GITHUB_OWNER  = 'alvfervia';
 var GITHUB_REPO   = 'image-eval';
 var GITHUB_BRANCH = 'main';
@@ -449,8 +439,7 @@ var GITHUB_PATH   = 'results/';
 function changeExp(delta) {
   var inp = document.getElementById('evaluator-exp');
   var v   = parseInt(inp.value) || 0;
-  v = Math.max(0, Math.min(60, v + delta));
-  inp.value = v;
+  inp.value = Math.max(0, Math.min(60, v + delta));
 }
 
 function groundTruth(group) {
@@ -480,8 +469,8 @@ function shuffle(arr) {
 }
 
 function insertRepeats(base) {
-  var arr  = base.slice();
-  var n    = Math.min(NUM_REPEATS, arr.length);
+  var arr = base.slice();
+  var n   = Math.min(NUM_REPEATS, arr.length);
   shuffle(arr.map(function(_, i){ return i; })).slice(0, n).forEach(function(origIdx) {
     var img    = arr[origIdx];
     var first  = arr.indexOf(img);
@@ -524,8 +513,8 @@ function preloadAll(list, onDone) {
 function startSurvey() {
   var id  = document.getElementById('evaluator-id').value.trim();
   var exp = parseInt(document.getElementById('evaluator-exp').value);
-  if (!id)             { alert('Por favor introduce tu identificador.'); return; }
-  if (isNaN(exp) || exp < 0) { alert('Por favor indica los años de experiencia (mínimo 0).'); return; }
+  if (!id)                  { alert('Por favor introduce tu identificador.'); return; }
+  if (isNaN(exp) || exp < 0){ alert('Por favor indica los años de experiencia (mínimo 0).'); return; }
 
   evaluatorId  = id;
   evaluatorExp = exp;
@@ -628,7 +617,6 @@ function showDone() {
   document.getElementById('stat-recon').textContent = nRec;
   document.getElementById('stat-avg').textContent   = avgQ;
 
-  /* Subida automática al terminar */
   uploadToGitHub();
 }
 
@@ -659,34 +647,39 @@ function uploadToGitHub() {
   var retryBtn = document.getElementById('btn-retry-upload');
   var doneMsg  = document.getElementById('done-msg');
 
-  status.className   = 'upload-status info';
-  status.textContent = '⏳ Enviando resultados…';
+  status.className       = 'upload-status info';
+  status.textContent     = '⏳ Enviando resultados…';
   retryBtn.style.display = 'none';
 
-  if (!WORKER_URL) {
-    status.textContent  = '⚠ Worker no configurado. Descarga el CSV manualmente.';
+  if (!GITHUB_TOKEN) {
+    status.textContent  = '⚠ Token no configurado. Descarga el CSV manualmente.';
     status.className    = 'upload-status err';
     doneMsg.textContent = 'Has completado la evaluación. Descarga el CSV y entrégaselo al investigador.';
     return;
   }
 
-  var fname   = 'results/survey_' + evaluatorId.replace(/[^a-zA-Z0-9_-]/g,'_') + '_' + Date.now() + '.csv';
-  var b64     = btoa(unescape(encodeURIComponent(buildCSV())));
+  var fname  = 'survey_' + evaluatorId.replace(/[^a-zA-Z0-9_-]/g,'_') + '_' + Date.now() + '.csv';
+  var path   = GITHUB_PATH + fname;
+  var apiUrl = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + path;
+  var b64    = btoa(unescape(encodeURIComponent(buildCSV())));
 
-  fetch(WORKER_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filename: fname, content: b64 })
+  fetch(apiUrl, {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + GITHUB_TOKEN,
+      'Content-Type':  'application/json',
+      'Accept':        'application/vnd.github+json'
+    },
+    body: JSON.stringify({ message: 'Survey result: ' + fname, content: b64, branch: GITHUB_BRANCH })
   })
-  .then(function(res) { return res.json().then(function(d){ return { ok: res.ok, data: d }; }); })
-  .then(function(r) {
-    if (r.ok) {
+  .then(function(res) {
+    if (res.status === 201) {
       doneMsg.textContent    = '¡Resultados guardados! Puedes cerrar esta página.';
-      status.textContent     = '✓ Guardado correctamente en ' + fname;
+      status.textContent     = '✓ Guardado correctamente en results/' + fname;
       status.className       = 'upload-status ok';
       retryBtn.style.display = 'none';
     } else {
-      throw new Error(r.data.message || 'Error del servidor');
+      return res.json().then(function(d){ throw new Error(d.message || 'HTTP ' + res.status); });
     }
   })
   .catch(function(err) {
