@@ -8,63 +8,29 @@
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;800&display=swap');
 
   :root {
-    --bg: #0e0e0f;
-    --surface: #161618;
-    --surface2: #1e1e21;
-    --border: #2a2a2e;
-    --accent: #e8ff47;
-    --text: #f0efe8;
-    --muted: #6b6b72;
-    --real-color: #4ade80;
-    --recon-color: #f87171;
+    --bg: #0e0e0f; --surface: #161618; --surface2: #1e1e21;
+    --border: #2a2a2e; --accent: #e8ff47; --text: #f0efe8;
+    --muted: #6b6b72; --real-color: #4ade80; --recon-color: #f87171;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; overflow-x: hidden; }
 
   body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: 0.4;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 999;
-    opacity: 0.4;
   }
 
-  #intro {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; min-height: 100vh;
-    padding: 2rem; text-align: center; animation: fadeIn .6s ease;
-  }
+  /* ── INTRO ── */
+  #intro { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; text-align: center; animation: fadeIn .6s ease; }
 
-  .intro-badge {
-    font-family: 'DM Mono', monospace; font-size: .7rem;
-    letter-spacing: .2em; text-transform: uppercase;
-    color: var(--accent); border: 1px solid var(--accent);
-    padding: .35rem .9rem; border-radius: 2rem; margin-bottom: 2rem;
-  }
+  .intro-badge { font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: .35rem .9rem; border-radius: 2rem; margin-bottom: 2rem; }
 
-  #intro h1 {
-    font-size: clamp(2.2rem, 6vw, 4.5rem); font-weight: 800;
-    line-height: 1.05; max-width: 700px; margin-bottom: 1.2rem;
-  }
-
+  #intro h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); font-weight: 800; line-height: 1.05; max-width: 700px; margin-bottom: 1.2rem; }
   #intro h1 span { color: var(--accent); }
+  #intro > p { color: var(--muted); max-width: 500px; line-height: 1.7; font-size: .95rem; margin-bottom: 2.5rem; }
 
-  #intro p {
-    color: var(--muted); max-width: 500px; line-height: 1.7;
-    font-size: .95rem; margin-bottom: 2.5rem;
-  }
-
-  .intro-fields { width: 100%; max-width: 360px; margin-bottom: 2rem; }
+  .intro-fields { width: 100%; max-width: 360px; margin-bottom: 2rem; display: flex; flex-direction: column; gap: .75rem; }
 
   .intro-fields input {
     background: var(--surface); border: 1px solid var(--border);
@@ -72,217 +38,122 @@
     font-family: 'Syne', sans-serif; font-size: .9rem; outline: none;
     transition: border-color .2s; width: 100%;
   }
-
   .intro-fields input:focus { border-color: var(--accent); }
 
-  .btn-start {
-    background: var(--accent); color: #0e0e0f; border: none;
-    padding: 1rem 2.5rem; border-radius: .5rem;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
-    cursor: pointer; letter-spacing: .05em;
-    transition: transform .15s, box-shadow .15s;
-  }
+  .exp-label { font-family: 'DM Mono', monospace; font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: left; padding-left: .1rem; }
 
+  .exp-row { display: flex; align-items: center; gap: .75rem; background: var(--surface); border: 1px solid var(--border); border-radius: .5rem; padding: .75rem 1.1rem; transition: border-color .2s; }
+  .exp-row:focus-within { border-color: var(--accent); }
+
+  .exp-row input[type="number"] {
+    background: transparent; border: none; color: var(--text);
+    font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+    width: 72px; outline: none; -moz-appearance: textfield;
+  }
+  .exp-row input[type="number"]::-webkit-inner-spin-button,
+  .exp-row input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  .exp-unit { font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--muted); white-space: nowrap; }
+
+  .exp-btns { display: flex; gap: .3rem; margin-left: auto; }
+  .exp-btns button { background: var(--surface2); border: 1px solid var(--border); color: var(--text); width: 32px; height: 32px; border-radius: .35rem; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color .15s, color .15s; line-height: 1; }
+  .exp-btns button:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-start { background: var(--accent); color: #0e0e0f; border: none; padding: 1rem 2.5rem; border-radius: .5rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; letter-spacing: .05em; transition: transform .15s, box-shadow .15s; }
   .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
 
-  #loading {
-    display: none; flex-direction: column; align-items: center;
-    justify-content: center; min-height: 100vh;
-    padding: 2rem; text-align: center; animation: fadeIn .4s ease;
-  }
-
+  /* ── LOADING ── */
+  #loading { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; text-align: center; animation: fadeIn .4s ease; }
   #loading h2 { font-size: 2.2rem; font-weight: 800; margin: 1.5rem 0 .75rem; }
   #loading h2 span { color: var(--accent); }
   #loading p { color: var(--muted); max-width: 380px; line-height: 1.7; font-size: .95rem; margin-bottom: 2rem; }
-
-  .load-bar-wrap {
-    width: 100%; max-width: 400px; background: var(--border);
-    border-radius: 4px; height: 6px; overflow: hidden; margin-bottom: .75rem;
-  }
-
+  .load-bar-wrap { width: 100%; max-width: 400px; background: var(--border); border-radius: 4px; height: 6px; overflow: hidden; margin-bottom: .75rem; }
   #load-fill { height: 100%; background: var(--accent); border-radius: 4px; width: 0%; transition: width .2s ease; }
   #load-label { font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--muted); }
 
+  /* ── SURVEY ── */
   #survey { display: none; animation: fadeIn .4s ease; }
-
-  .survey-header {
-    position: sticky; top: 0; z-index: 10;
-    background: rgba(14,14,15,.92); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem 2rem; display: flex;
-    align-items: center; justify-content: space-between; gap: 1rem;
-  }
-
+  .survey-header { position: sticky; top: 0; z-index: 10; background: rgba(14,14,15,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
   .survey-logo { font-weight: 800; font-size: 1rem; }
   .survey-logo span { color: var(--accent); }
-
   .progress-wrap { flex: 1; max-width: 400px; display: flex; flex-direction: column; gap: .3rem; }
-
-  .progress-label {
-    font-family: 'DM Mono', monospace; font-size: .7rem;
-    color: var(--muted); display: flex; justify-content: space-between;
-  }
-
+  .progress-label { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--muted); display: flex; justify-content: space-between; }
   .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-
   .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .4s ease; width: 0%; }
-
-  .counter-pill {
-    font-family: 'DM Mono', monospace; font-size: .75rem;
-    background: var(--surface2); border: 1px solid var(--border);
-    padding: .3rem .75rem; border-radius: 2rem; white-space: nowrap;
-  }
+  .counter-pill { font-family: 'DM Mono', monospace; font-size: .75rem; background: var(--surface2); border: 1px solid var(--border); padding: .3rem .75rem; border-radius: 2rem; white-space: nowrap; }
 
   .card-wrap { display: flex; justify-content: center; padding: 2.5rem 1.5rem 4rem; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 1rem; overflow: hidden; width: 100%; max-width: 620px; animation: slideUp .35s ease; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 1rem; overflow: hidden; width: 100%; max-width: 620px;
-    animation: slideUp .35s ease;
-  }
-
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .img-container {
-    width: 100%; aspect-ratio: 4/3; background: var(--surface2);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden; position: relative;
-  }
-
-  .img-container img { width: 100%; height: 100%; object-fit: contain; display: block; }
-
-  .img-placeholder {
-    display: flex; flex-direction: column; align-items: center;
-    gap: .75rem; color: var(--muted);
-    font-family: 'DM Mono', monospace; font-size: .75rem;
-  }
-
+  .img-container { width: 100%; height: 500px; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+  @media (max-width: 640px) { .img-container { height: 320px; } }
+  .img-container img { width: 100%; height: 100%; object-fit: contain; display: block; image-rendering: auto; }
+  .img-placeholder { display: flex; flex-direction: column; align-items: center; gap: .75rem; color: var(--muted); font-family: 'DM Mono', monospace; font-size: .75rem; }
   .img-placeholder svg { opacity: .3; }
-
-  .img-label {
-    position: absolute; top: .75rem; left: .75rem;
-    font-family: 'DM Mono', monospace; font-size: .65rem; letter-spacing: .1em;
-    background: rgba(14,14,15,.8); border: 1px solid var(--border);
-    padding: .25rem .6rem; border-radius: .3rem; color: var(--muted);
-  }
+  .img-label { position: absolute; top: .75rem; left: .75rem; font-family: 'DM Mono', monospace; font-size: .65rem; letter-spacing: .1em; background: rgba(14,14,15,.8); border: 1px solid var(--border); padding: .25rem .6rem; border-radius: .3rem; color: var(--muted); }
 
   .card-body { padding: 1.75rem; display: flex; flex-direction: column; gap: 1.5rem; }
-
-  .section-label {
-    font-family: 'DM Mono', monospace; font-size: .65rem;
-    letter-spacing: .15em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: .75rem;
-  }
+  .section-label { font-family: 'DM Mono', monospace; font-size: .65rem; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: .75rem; }
 
   .type-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
-
-  .type-btn {
-    padding: .85rem; border-radius: .5rem; border: 1.5px solid var(--border);
-    background: transparent; color: var(--muted);
-    font-family: 'Syne', sans-serif; font-weight: 600; font-size: .9rem;
-    cursor: pointer; transition: all .2s;
-    display: flex; align-items: center; justify-content: center; gap: .5rem;
-  }
-
+  .type-btn { padding: .85rem; border-radius: .5rem; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-family: 'Syne', sans-serif; font-weight: 600; font-size: .9rem; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: .5rem; }
   .type-btn:hover { border-color: var(--text); color: var(--text); }
-  .type-btn.selected-real { border-color: var(--real-color); background: rgba(74,222,128,.08); color: var(--real-color); }
+  .type-btn.selected-real  { border-color: var(--real-color);  background: rgba(74,222,128,.08);  color: var(--real-color); }
   .type-btn.selected-recon { border-color: var(--recon-color); background: rgba(248,113,113,.08); color: var(--recon-color); }
 
   .likert-group { display: flex; flex-direction: column; gap: 1.1rem; }
-  .likert-row { display: flex; flex-direction: column; gap: .5rem; }
-
+  .likert-row   { display: flex; flex-direction: column; gap: .5rem; }
   .likert-title { font-size: .88rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
-  .likert-val { font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--accent); min-width: 1.5rem; text-align: right; }
-
+  .likert-val   { font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--accent); min-width: 1.5rem; text-align: right; }
   .likert-scale { display: grid; grid-template-columns: repeat(7, 1fr); gap: .3rem; }
   .likert-scale label { display: flex; flex-direction: column; align-items: center; gap: .3rem; cursor: pointer; }
   .likert-scale input[type="radio"] { display: none; }
-
-  .likert-dot {
-    width: 100%; aspect-ratio: 1; max-width: 44px; border-radius: .3rem;
-    border: 1.5px solid var(--border); background: transparent;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Mono', monospace; font-size: .75rem;
-    color: var(--muted); transition: all .15s; cursor: pointer;
-  }
-
+  .likert-dot { width: 100%; aspect-ratio: 1; max-width: 44px; border-radius: .3rem; border: 1.5px solid var(--border); background: transparent; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--muted); transition: all .15s; cursor: pointer; }
   .likert-scale label:hover .likert-dot { border-color: var(--accent); color: var(--accent); }
   .likert-scale input[type="radio"]:checked + .likert-dot { background: var(--accent); border-color: var(--accent); color: #0e0e0f; font-weight: 700; }
-
   .likert-ends { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--muted); padding: 0 .1rem; }
 
-  .btn-next {
-    background: var(--accent); color: #0e0e0f; border: none; padding: .95rem;
-    border-radius: .5rem; font-family: 'Syne', sans-serif; font-weight: 700;
-    font-size: .95rem; cursor: pointer; width: 100%;
-    transition: transform .15s, box-shadow .15s, opacity .2s; letter-spacing: .04em;
-  }
-
+  .btn-next { background: var(--accent); color: #0e0e0f; border: none; padding: .95rem; border-radius: .5rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem; cursor: pointer; width: 100%; transition: transform .15s, box-shadow .15s, opacity .2s; letter-spacing: .04em; }
   .btn-next:disabled { opacity: .35; cursor: not-allowed; }
   .btn-next:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
-
-  #done {
-    display: none; flex-direction: column; align-items: center;
-    justify-content: center; min-height: 100vh;
-    padding: 2rem; text-align: center; animation: fadeIn .5s ease;
-  }
-
-  .done-icon {
-    width: 72px; height: 72px; border-radius: 50%;
-    border: 2px solid var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2rem; margin-bottom: 1.5rem;
-    animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
-  }
-
-  @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-  #done h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: .75rem; }
-  #done h2 span { color: var(--accent); }
-  #done p { color: var(--muted); max-width: 400px; line-height: 1.7; margin-bottom: 2rem; }
-
-  .done-stats { display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: center; }
-
-  .done-stat { background: var(--surface); border: 1px solid var(--border); border-radius: .75rem; padding: 1rem 1.5rem; display: flex; flex-direction: column; align-items: center; gap: .25rem; }
-  .done-stat-val { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
-  .done-stat-label { font-family: 'DM Mono', monospace; font-size: .65rem; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
-
-  .done-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
-
-  .btn-download, .btn-upload {
-    border: none; padding: 1rem 2rem; border-radius: .5rem;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem;
-    cursor: pointer; transition: transform .15s, box-shadow .15s;
-    display: flex; align-items: center; gap: .5rem;
-  }
-
-  .btn-download { background: var(--accent); color: #0e0e0f; }
-  .btn-download:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
-
-  .btn-upload { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-  .btn-upload:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-upload:disabled { opacity: .4; cursor: not-allowed; }
-
-  .upload-status {
-    font-family: 'DM Mono', monospace; font-size: .75rem;
-    margin-top: .75rem; padding: .5rem 1rem; border-radius: .4rem;
-    display: none;
-  }
-  .upload-status.ok  { display: block; background: rgba(74,222,128,.1); color: var(--real-color); border: 1px solid rgba(74,222,128,.3); }
-  .upload-status.err { display: block; background: rgba(248,113,113,.1); color: var(--recon-color); border: 1px solid rgba(248,113,113,.3); }
 
   .error-msg { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--recon-color); text-align: center; display: none; }
   .error-msg.show { display: block; }
 
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  /* ── DONE ── */
+  #done { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; text-align: center; animation: fadeIn .5s ease; }
+  .done-icon { width: 72px; height: 72px; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1.5rem; animation: popIn .4s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  #done h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: .75rem; }
+  #done h2 span { color: var(--accent); }
+  #done > p { color: var(--muted); max-width: 440px; line-height: 1.7; margin-bottom: 2rem; }
 
-  @media (max-width: 500px) {
-    .card-body { padding: 1.25rem; }
-    .survey-header { padding: .75rem 1rem; }
+  .done-stats { display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: center; }
+  .done-stat { background: var(--surface); border: 1px solid var(--border); border-radius: .75rem; padding: 1rem 1.5rem; display: flex; flex-direction: column; align-items: center; gap: .25rem; }
+  .done-stat-val   { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+  .done-stat-label { font-family: 'DM Mono', monospace; font-size: .65rem; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+
+  .done-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1rem; }
+
+  .btn-primary, .btn-secondary {
+    border: none; padding: 1rem 2rem; border-radius: .5rem;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem;
+    cursor: pointer; display: flex; align-items: center; gap: .5rem;
+    transition: transform .15s, box-shadow .15s;
   }
+  .btn-primary   { background: var(--accent); color: #0e0e0f; }
+  .btn-primary:hover   { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,.25); }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .upload-status { font-family: 'DM Mono', monospace; font-size: .78rem; margin-top: .5rem; padding: .65rem 1.25rem; border-radius: .4rem; display: none; max-width: 440px; line-height: 1.6; text-align: center; }
+  .upload-status.ok   { display: block; background: rgba(74,222,128,.1);  color: var(--real-color);  border: 1px solid rgba(74,222,128,.3); }
+  .upload-status.err  { display: block; background: rgba(248,113,113,.1); color: var(--recon-color); border: 1px solid rgba(248,113,113,.3); }
+  .upload-status.info { display: block; background: rgba(232,255,71,.08); color: var(--accent);      border: 1px solid rgba(232,255,71,.25); }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @media (max-width: 500px) { .card-body { padding: 1.25rem; } .survey-header { padding: .75rem 1rem; } }
 </style>
 </head>
 <body>
@@ -291,10 +162,22 @@
 <section id="intro">
   <div class="intro-badge">Estudio Perceptual &middot; Imagen M&eacute;dica</div>
   <h1>Evaluaci&oacute;n de<br><span>Calidad Visual</span></h1>
-  <p>Se te mostrar&aacute;n im&aacute;genes de forma aleatoria. Para cada una indica si crees que es real o reconstruida y cal&iacute;fica su calidad en tres dimensiones.</p>
+  <p>Se te mostrar&aacute;n im&aacute;genes de forma aleatoria. Indica si cada una es real o reconstruida y cal&iacute;fica su calidad en tres dimensiones.</p>
+
   <div class="intro-fields">
     <input type="text" id="evaluator-id" placeholder="Tu identificador (ej. EV-01)" autocomplete="off">
+
+    <div class="exp-label">A&ntilde;os de experiencia cl&iacute;nica</div>
+    <div class="exp-row">
+      <input type="number" id="evaluator-exp" value="0" min="0" max="60" step="1" inputmode="numeric">
+      <span class="exp-unit">a&ntilde;os</span>
+      <div class="exp-btns">
+        <button onclick="changeExp(-1)" type="button">&#8722;</button>
+        <button onclick="changeExp(+1)" type="button">&#43;</button>
+      </div>
+    </div>
   </div>
+
   <button class="btn-start" onclick="startSurvey()">Comenzar evaluaci&oacute;n &rarr;</button>
 </section>
 
@@ -312,9 +195,7 @@
   <header class="survey-header">
     <div class="survey-logo">Image<span>Eval</span></div>
     <div class="progress-wrap">
-      <div class="progress-label">
-        <span>Progreso</span><span id="pct-label">0%</span>
-      </div>
+      <div class="progress-label"><span>Progreso</span><span id="pct-label">0%</span></div>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
     </div>
     <div class="counter-pill" id="counter-pill">1 / ?</div>
@@ -325,8 +206,7 @@
       <div class="img-container" id="img-container">
         <div class="img-placeholder">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
           </svg>
           <span>Cargando imagen...</span>
         </div>
@@ -337,26 +217,23 @@
         <div>
           <div class="section-label">&iquest;Esta imagen es...?</div>
           <div class="type-toggle">
-            <button class="type-btn" id="btn-real" onclick="selectType('real')">&#10003; Imagen Real</button>
+            <button class="type-btn" id="btn-real"  onclick="selectType('real')">&#10003; Imagen Real</button>
             <button class="type-btn" id="btn-recon" onclick="selectType('reconstructed')">&#x27F3; Reconstruida</button>
           </div>
         </div>
 
         <div class="likert-group">
           <div class="section-label">Calificaci&oacute;n (1 = Muy baja &middot; 7 = Muy alta)</div>
-
           <div class="likert-row">
             <div class="likert-title">Calidad de imagen <span class="likert-val" id="val-quality">--</span></div>
             <div class="likert-scale" id="scale-quality"></div>
             <div class="likert-ends"><span>Muy baja</span><span>Muy alta</span></div>
           </div>
-
           <div class="likert-row">
             <div class="likert-title">Realismo de imagen <span class="likert-val" id="val-realism">--</span></div>
             <div class="likert-scale" id="scale-realism"></div>
             <div class="likert-ends"><span>Nada realista</span><span>Muy realista</span></div>
           </div>
-
           <div class="likert-row">
             <div class="likert-title">Realismo del color <span class="likert-val" id="val-color">--</span></div>
             <div class="likert-scale" id="scale-color"></div>
@@ -375,26 +252,20 @@
 <section id="done">
   <div class="done-icon">&#10003;</div>
   <h2>Evaluaci&oacute;n<br><span>completada!</span></h2>
-  <p>Has evaluado todas las im&aacute;genes. Descarga el CSV o env&iacute;alo directamente al repositorio.</p>
+  <p id="done-msg">Guardando resultados&hellip;</p>
   <div class="done-stats">
     <div class="done-stat"><div class="done-stat-val" id="stat-real">--</div><div class="done-stat-label">Clasificadas real</div></div>
     <div class="done-stat"><div class="done-stat-val" id="stat-recon">--</div><div class="done-stat-label">Clasificadas reconstruida</div></div>
     <div class="done-stat"><div class="done-stat-val" id="stat-avg">--</div><div class="done-stat-label">Calidad media</div></div>
   </div>
   <div class="done-actions">
-    <button class="btn-download" onclick="downloadCSV()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-        <polyline points="7 10 12 15 17 10"/>
-        <line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
+    <button class="btn-secondary" onclick="downloadCSV()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Descargar CSV
     </button>
-    <button class="btn-upload" id="btn-upload" onclick="uploadToGitHub()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
-      </svg>
-      Enviar a GitHub
+    <button class="btn-primary" id="btn-retry-upload" onclick="uploadToGitHub()" style="display:none">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+      Reintentar envío
     </button>
   </div>
   <div class="upload-status" id="upload-status"></div>
@@ -402,29 +273,20 @@
 
 <script>
 /* =============================================================
-   CONFIGURACION — RELLENA AQUI LOS NOMBRES DE TUS IMAGENES
-   =============================================================
-
-   6 carpetas: 2 de imágenes reales, 2 del modelo A, 2 del modelo B.
-   Las carpetas dentro del repositorio deben seguir esta estructura:
-     images/real1/       → imágenes reales dataset 1
-     images/real2/       → imágenes reales dataset 2
-     images/modeloA1/    → modelo A dataset 1
-     images/modeloA2/    → modelo A dataset 2
-     images/modeloB1/    → modelo B dataset 1
-     images/modeloB2/    → modelo B dataset 2
-
-   En el CSV de salida:
-     - image_group "real1" y "real2"   → son imágenes REALES
-     - image_group "modeloA1", "modeloA2", "modeloB1", "modeloB2" → son RECONSTRUIDAS
-   El campo "ground_truth" en el CSV lo indica explícitamente.
-*/
-
+   IMÁGENES — añade aquí todos tus archivos por carpeta
+   Carpetas en el repositorio:
+     images/real/       images/real2/
+     images/modeloA/    images/modeloA2/
+     images/modeloD/    images/modeloD2/
+   En el CSV: real/real2 → ground_truth "real"
+              resto      → ground_truth "reconstructed"
+============================================================= */
 var REAL_IMAGES = [
+  var REAL_IMAGES = [
   '003_VP3_frame0283.png',
   '004_VP4_frame0008.png',
-  '005_VP4_frame0016.png',
- /* '009_VP7_frame0189.png',
+  '005_VP4_frame0016.png'/*,
+  '009_VP7_frame0189.png',
   '009_VP7_frame0515.png',
   '011_VP9_frame0170.png',
   '012_VP9_frame0810.png',
@@ -446,8 +308,8 @@ var REAL_IMAGES = [
 var REAL2_IMAGES = [
   '001-004_1263.jpg',
   '001-004_1333.jpg',
-  '001-004_1845.jpg',
- /* '001-004_2049.jpg',
+  '001-004_1845.jpg'
+  /* '001-004_2049.jpg',
   '001-004_3228.jpg',
   '001-004_3446.jpg',
   '001-004_3584.jpg',
@@ -469,7 +331,7 @@ var REAL2_IMAGES = [
 
 var MODELOA_IMAGES = [
   '003_VP3_frame0100_out.png',
-  '004_VP4_frame0030_out.png',
+  '004_VP4_frame0030_out.png'
   /*'004_VP4_frame0815_out.png',
   '009_VP7_frame0368_out.png',
   '010_VP9_frame0148_out.png',
@@ -492,8 +354,8 @@ var MODELOA_IMAGES = [
 
 var MODELOA2_IMAGES = [
   '001-004_1263_out.jpg',
-  '001-004_1333_out.jpg',
-/*  '001-004_1845_out.jpg',
+  '001-004_1333_out.jpg'
+  /*  '001-004_1845_out.jpg',
   '001-004_2049_out.jpg',
   '001-004_3228_out.jpg',
   '001-004_3446_out.jpg',
@@ -516,7 +378,7 @@ var MODELOA2_IMAGES = [
 
 var MODELOD_IMAGES = [
   '003_VP3_frame0304_out.png',
-  '004_VP4_frame0288_out.png',
+  '004_VP4_frame0288_out.png'
   /*'009_VP7_frame0141_out.png',
   '009_VP7_frame0368_out.png',
   '010_VP9_frame0082_out.png',
@@ -539,8 +401,8 @@ var MODELOD_IMAGES = [
 
 var MODELOD2_IMAGES = [
   '001-004_1263_out.jpg',
-  '001-004_1333_out.jpg',
-/*  '001-004_1845_out.jpg',
+  '001-004_1333_out.jpg'
+  /*  '001-004_1845_out.jpg',
   '001-004_2049_out.jpg',
   '001-004_3228_out.jpg',
   '001-004_3446_out.jpg',
@@ -562,37 +424,34 @@ var MODELOD2_IMAGES = [
 ];
 
 /* =============================================================
-   CONFIGURACION DE REPETICIONES
-   =============================================================
-   NUM_REPEATS: cuántas imágenes se repetirán una vez (ej: 5)
-   MIN_GAP: distancia mínima (en posiciones) entre la primera
-            aparición de una imagen y su repetición.
-            Recomendado: al menos 10-15 para 60 imágenes.
-*/
-var NUM_REPEATS  = 5;
-var MIN_GAP      = 12;
+   REPETICIONES
+   NUM_REPEATS imágenes se muestran una segunda vez.
+   MIN_GAP: posiciones mínimas de separación respecto a la 1ª vez.
+============================================================= */
+var NUM_REPEATS = 5;
+var MIN_GAP     = 12;
 
 /* =============================================================
-   CONFIGURACION DE GITHUB (para envío automático del CSV)
-   =============================================================
-   Para activar el envío a GitHub necesitas:
-   1. Crear un repositorio en GitHub (puede ser privado).
-   2. Generar un Personal Access Token con permiso "repo":
-      GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens
-      Selecciona el repositorio y concede permisos de Contents (Read & Write).
-   3. Rellenar los campos de abajo.
-
-   IMPORTANTE: Si este archivo es público, NO pongas el token aquí directamente.
-   En su lugar usa una variable de entorno o un servicio intermediario.
-   Para uso en local o repositorio privado, rellenar aquí es suficiente.
-*/
-var GITHUB_TOKEN  = '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';             // Tu Personal Access Token de GitHub
-var GITHUB_OWNER  = 'alvfervia';             // Tu usuario u organización (ej: 'maria-garcia')
-var GITHUB_REPO   = 'image-eval';             // Nombre del repositorio (ej: 'image-eval-results')
-var GITHUB_BRANCH = 'main';         // Rama donde guardar los CSVs
-var GITHUB_PATH   = 'results/';     // Carpeta dentro del repo (con / al final)
+   WORKER URL — único valor que necesitas configurar
+   Pega aquí la URL de tu Cloudflare Worker.
+   Cualquiera con el link del evaluador podrá subir resultados
+   sin ver ni tocar ningún token.
+   Ejemplo: 'https://image-eval-upload.tu-usuario.workers.dev'
+============================================================= */
+var GITHUB_TOKEN  = '';           
+var GITHUB_OWNER  = 'alvfervia';
+var GITHUB_REPO   = 'image-eval';
+var GITHUB_BRANCH = 'main';
+var GITHUB_PATH   = 'results/';
 
 /* ============================================================= */
+
+function changeExp(delta) {
+  var inp = document.getElementById('evaluator-exp');
+  var v   = parseInt(inp.value) || 0;
+  v = Math.max(0, Math.min(60, v + delta));
+  inp.value = v;
+}
 
 function groundTruth(group) {
   return (group === 'real' || group === 'real2') ? 'real' : 'reconstructed';
@@ -600,123 +459,78 @@ function groundTruth(group) {
 
 function buildImageList() {
   var list = [];
-  REAL_IMAGES.forEach(function(f)    { list.push({ file: 'images/real/' + f,    group: 'real'    }); });
-  REAL2_IMAGES.forEach(function(f)    { list.push({ file: 'images/real2/' + f,    group: 'real2'    }); });
-  MODELOA_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloA/' + f, group: 'modeloA' }); });
-  MODELOA2_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloA2/' + f, group: 'modeloA2' }); });
-  MODELOD_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloD/' + f, group: 'modeloD' }); });
-  MODELOD2_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloD2/' + f, group: 'modeloD2' }); });
+  REAL_IMAGES.forEach(function(f)    { list.push({ file: 'images/real/'     + f, group: 'real'     }); });
+  REAL2_IMAGES.forEach(function(f)   { list.push({ file: 'images/real2/'    + f, group: 'real2'    }); });
+  MODELOA_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloA/'  + f, group: 'modeloA'  }); });
+  MODELOA2_IMAGES.forEach(function(f){ list.push({ file: 'images/modeloA2/' + f, group: 'modeloA2' }); });
+  MODELOD_IMAGES.forEach(function(f) { list.push({ file: 'images/modeloD/'  + f, group: 'modeloD'  }); });
+  MODELOD2_IMAGES.forEach(function(f){ list.push({ file: 'images/modeloD2/' + f, group: 'modeloD2' }); });
   return list;
 }
 
-var imageList    = [];
-var imageCache   = {};
-var currentIdx   = 0;
-var responses    = [];
-var evaluatorId  = '';
-var selectedType = null;
-var totalImages  = 0;
+var imageList = [], imageCache = {}, currentIdx = 0, responses = [];
+var evaluatorId = '', evaluatorExp = 0, selectedType = null, totalImages = 0;
 
 function shuffle(arr) {
   var a = arr.slice();
   for (var i = a.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t;
   }
   return a;
 }
 
-/*
-  Inserta NUM_REPEATS repeticiones respetando MIN_GAP.
-  Elige imágenes al azar del array base y busca una posición
-  de inserción que esté al menos MIN_GAP posiciones por delante
-  de la primera aparición.
-*/
 function insertRepeats(base) {
-  var arr   = base.slice();
-  var total = arr.length;
-
-  // Escoge imágenes candidatas para repetir (índices en el array base original)
-  var candidates = shuffle(Array.from({length: total}, function(_, i){ return i; })).slice(0, NUM_REPEATS);
-
-  candidates.forEach(function(origIdx) {
-    var img        = arr[origIdx]; // imagen original en el array ya shuffled
-    // posición actual de esa imagen en arr
-    var firstPos   = arr.indexOf(img);
-    // rango válido para insertar: [firstPos + MIN_GAP, arr.length]
-    var minInsert  = firstPos + MIN_GAP;
-    var maxInsert  = arr.length; // al final inclusive
-    if (minInsert > maxInsert) minInsert = maxInsert; // si no hay hueco, va al final
-    var insertPos  = Math.floor(Math.random() * (maxInsert - minInsert + 1)) + minInsert;
-    // Crea copia con marca de repetición
-    var clone = { file: img.file, group: img.group, repeated: true };
-    arr.splice(insertPos, 0, clone);
+  var arr  = base.slice();
+  var n    = Math.min(NUM_REPEATS, arr.length);
+  shuffle(arr.map(function(_, i){ return i; })).slice(0, n).forEach(function(origIdx) {
+    var img    = arr[origIdx];
+    var first  = arr.indexOf(img);
+    var minIns = first + MIN_GAP;
+    var maxIns = arr.length;
+    if (minIns > maxIns) minIns = maxIns;
+    var pos = Math.floor(Math.random() * (maxIns - minIns + 1)) + minIns;
+    arr.splice(pos, 0, { file: img.file, group: img.group, repeated: true });
   });
-
   return arr;
 }
 
-function buildLikertScale(containerId, name, valId) {
-  var container = document.getElementById(containerId);
-  container.innerHTML = '';
+function buildLikertScale(cid, name, vid) {
+  var c = document.getElementById(cid); c.innerHTML = '';
   for (var v = 1; v <= 7; v++) {
     (function(val) {
       var lbl = document.createElement('label');
       var inp = document.createElement('input');
-      inp.type  = 'radio';
-      inp.name  = name;
-      inp.value = val;
-      inp.addEventListener('change', function() {
-        document.getElementById(valId).textContent = val;
-        checkReady();
-      });
-      var dot       = document.createElement('div');
-      dot.className = 'likert-dot';
-      dot.textContent = val;
-      lbl.appendChild(inp);
-      lbl.appendChild(dot);
-      container.appendChild(lbl);
+      inp.type = 'radio'; inp.name = name; inp.value = val;
+      inp.addEventListener('change', function() { document.getElementById(vid).textContent = val; checkReady(); });
+      var dot = document.createElement('div'); dot.className = 'likert-dot'; dot.textContent = val;
+      lbl.appendChild(inp); lbl.appendChild(dot); c.appendChild(lbl);
     })(v);
   }
 }
 
 function preloadAll(list, onDone) {
-  var loaded = 0;
-  var total  = list.length;
-  var fill   = document.getElementById('load-fill');
-  var label  = document.getElementById('load-label');
-
+  var loaded = 0, total = list.length;
+  var fill = document.getElementById('load-fill'), lbl = document.getElementById('load-label');
+  if (total === 0) { onDone(); return; }
   list.forEach(function(img) {
     var key = img.file;
-    if (imageCache[key]) { // ya cargado (repetición)
-      loaded++;
-      fill.style.width  = Math.round((loaded / total) * 100) + '%';
-      label.textContent = loaded + ' / ' + total;
-      if (loaded === total) onDone();
-      return;
-    }
-    var el   = new Image();
-    var done = function() {
-      loaded++;
-      fill.style.width  = Math.round((loaded / total) * 100) + '%';
-      label.textContent = loaded + ' / ' + total;
-      imageCache[key]   = el;
-      if (loaded === total) onDone();
-    };
-    el.onload  = done;
-    el.onerror = done;
-    el.src     = key;
+    if (imageCache[key]) { loaded++; fill.style.width = Math.round(loaded/total*100)+'%'; lbl.textContent = loaded+' / '+total; if (loaded===total) onDone(); return; }
+    var el = new Image();
+    var done = function() { loaded++; fill.style.width = Math.round(loaded/total*100)+'%'; lbl.textContent = loaded+' / '+total; imageCache[key] = el; if (loaded===total) onDone(); };
+    el.onload = done; el.onerror = done; el.src = key;
   });
 }
 
 function startSurvey() {
-  var idInput = document.getElementById('evaluator-id').value.trim();
-  if (!idInput) { alert('Por favor introduce tu identificador.'); return; }
+  var id  = document.getElementById('evaluator-id').value.trim();
+  var exp = parseInt(document.getElementById('evaluator-exp').value);
+  if (!id)             { alert('Por favor introduce tu identificador.'); return; }
+  if (isNaN(exp) || exp < 0) { alert('Por favor indica los años de experiencia (mínimo 0).'); return; }
 
-  evaluatorId = idInput;
-  var base    = shuffle(buildImageList());
-  imageList   = insertRepeats(base);
-  totalImages = imageList.length;
+  evaluatorId  = id;
+  evaluatorExp = exp;
+  imageList    = insertRepeats(shuffle(buildImageList()));
+  totalImages  = imageList.length;
 
   buildLikertScale('scale-quality', 'quality', 'val-quality');
   buildLikertScale('scale-realism', 'realism', 'val-realism');
@@ -733,216 +547,153 @@ function startSurvey() {
 }
 
 function loadImage(idx) {
-  var img = imageList[idx];
-  currentIdx   = idx;
-  selectedType = null;
-
+  var img = imageList[idx]; currentIdx = idx; selectedType = null;
   document.getElementById('btn-real').className  = 'type-btn';
   document.getElementById('btn-recon').className = 'type-btn';
-  document.querySelectorAll('input[type="radio"]').forEach(function(r) { r.checked = false; });
-  document.getElementById('val-quality').textContent = '--';
-  document.getElementById('val-realism').textContent = '--';
-  document.getElementById('val-color').textContent   = '--';
+  document.querySelectorAll('input[type="radio"]').forEach(function(r){ r.checked = false; });
+  ['val-quality','val-realism','val-color'].forEach(function(id){ document.getElementById(id).textContent = '--'; });
   document.getElementById('error-msg').classList.remove('show');
   document.getElementById('btn-next').disabled = true;
-
-  document.getElementById('img-label').textContent = 'IMG ' + String(idx + 1).padStart(2, '0');
+  document.getElementById('img-label').textContent = 'IMG ' + String(idx+1).padStart(2,'0');
 
   var container   = document.getElementById('img-container');
-  var existing    = container.querySelector('img');
-  if (existing) existing.remove();
-
+  var existing    = container.querySelector('img'); if (existing) existing.remove();
   var placeholder = container.querySelector('.img-placeholder');
+  var el          = new Image(); el.style.cssText = 'width:100%;height:100%;object-fit:contain;'; el.alt = 'Imagen '+(idx+1);
   var cached      = imageCache[img.file];
-  var el          = new Image();
-  el.style.width     = '100%';
-  el.style.height    = '100%';
-  el.style.objectFit = 'contain';
-  el.alt = 'Imagen ' + (idx + 1);
-
-  if (cached && cached.complete && cached.naturalWidth > 0) {
-    el.src = cached.src;
-    placeholder.style.display = 'none';
-  } else {
-    el.src = img.file;
-    placeholder.style.display = 'flex';
-    el.onload = function() { placeholder.style.display = 'none'; };
-  }
-
+  if (cached && cached.complete && cached.naturalWidth > 0) { el.src = cached.src; placeholder.style.display = 'none'; }
+  else { el.src = img.file; placeholder.style.display = 'flex'; el.onload = function(){ placeholder.style.display = 'none'; }; }
   container.appendChild(el);
 
-  var pct = Math.round((idx / totalImages) * 100);
+  var pct = Math.round(idx / totalImages * 100);
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('pct-label').textContent     = pct + '%';
-  document.getElementById('counter-pill').textContent  = (idx + 1) + ' / ' + totalImages;
-
-  document.getElementById('btn-next').textContent =
-    idx === totalImages - 1 ? 'Finalizar evaluacion' : 'Siguiente imagen \u2192';
-
+  document.getElementById('counter-pill').textContent  = (idx+1) + ' / ' + totalImages;
+  document.getElementById('btn-next').textContent      = idx === totalImages-1 ? 'Finalizar evaluación' : 'Siguiente imagen →';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function selectType(type) {
   selectedType = type;
-  document.getElementById('btn-real').className =
-    type === 'real' ? 'type-btn selected-real' : 'type-btn';
-  document.getElementById('btn-recon').className =
-    type === 'reconstructed' ? 'type-btn selected-recon' : 'type-btn';
+  document.getElementById('btn-real').className  = type === 'real'          ? 'type-btn selected-real'  : 'type-btn';
+  document.getElementById('btn-recon').className = type === 'reconstructed' ? 'type-btn selected-recon' : 'type-btn';
   checkReady();
 }
 
 function getRadioVal(name) {
-  var sel = document.querySelector('input[name="' + name + '"]:checked');
-  return sel ? parseInt(sel.value) : null;
+  var s = document.querySelector('input[name="'+name+'"]:checked');
+  return s ? parseInt(s.value) : null;
 }
 
 function checkReady() {
-  var ok = selectedType !== null &&
-           getRadioVal('quality') !== null &&
-           getRadioVal('realism') !== null &&
-           getRadioVal('color')   !== null;
-  document.getElementById('btn-next').disabled = !ok;
+  document.getElementById('btn-next').disabled = !(
+    selectedType && getRadioVal('quality') !== null && getRadioVal('realism') !== null && getRadioVal('color') !== null
+  );
 }
 
 function submitCurrent() {
-  var quality = getRadioVal('quality');
-  var realism = getRadioVal('realism');
-  var color   = getRadioVal('color');
-
-  if (!selectedType || quality === null || realism === null || color === null) {
-    document.getElementById('error-msg').classList.add('show');
-    return;
+  var q = getRadioVal('quality'), r = getRadioVal('realism'), c = getRadioVal('color');
+  if (!selectedType || q===null || r===null || c===null) {
+    document.getElementById('error-msg').classList.add('show'); return;
   }
-
   var img = imageList[currentIdx];
   responses.push({
-    evaluator_id:   evaluatorId,
-    image_index:    currentIdx + 1,
-    image_file:     img.file,
-    image_group:    img.group,
-    ground_truth:   groundTruth(img.group),
-    is_repeat:      img.repeated ? 'yes' : 'no',
-    perceived_type: selectedType,
-    quality_score:  quality,
-    realism_score:  realism,
-    color_score:    color,
-    timestamp:      new Date().toISOString()
+    evaluator_id:         evaluatorId,
+    evaluator_experience: evaluatorExp,
+    image_index:          currentIdx + 1,
+    image_file:           img.file,
+    image_group:          img.group,
+    ground_truth:         groundTruth(img.group),
+    is_repeat:            img.repeated ? 'yes' : 'no',
+    perceived_type:       selectedType,
+    quality_score:        q,
+    realism_score:        r,
+    color_score:          c,
+    timestamp:            new Date().toISOString()
   });
-
-  if (currentIdx + 1 >= totalImages) {
-    showDone();
-  } else {
-    var card = document.getElementById('main-card');
-    card.style.opacity    = '0';
-    card.style.transform  = 'translateY(-16px)';
-    card.style.transition = 'opacity .2s, transform .2s';
-    setTimeout(function() {
-      card.style.opacity    = '';
-      card.style.transform  = '';
-      card.style.transition = '';
-      loadImage(currentIdx + 1);
-    }, 200);
-  }
+  if (currentIdx + 1 >= totalImages) { showDone(); return; }
+  var card = document.getElementById('main-card');
+  card.style.cssText = 'opacity:0;transform:translateY(-16px);transition:opacity .2s,transform .2s';
+  setTimeout(function(){ card.style.cssText = ''; loadImage(currentIdx+1); }, 200);
 }
 
 function showDone() {
   document.getElementById('survey').style.display = 'none';
   document.getElementById('done').style.display   = 'flex';
 
-  var nReal  = responses.filter(function(r) { return r.perceived_type === 'real'; }).length;
-  var nRecon = responses.filter(function(r) { return r.perceived_type === 'reconstructed'; }).length;
-  var sum    = responses.reduce(function(s, r) { return s + r.quality_score; }, 0);
-  var avgQ   = (sum / responses.length).toFixed(2);
-
+  var nReal = responses.filter(function(r){ return r.perceived_type==='real'; }).length;
+  var nRec  = responses.filter(function(r){ return r.perceived_type==='reconstructed'; }).length;
+  var avgQ  = (responses.reduce(function(s,r){ return s+r.quality_score; },0)/responses.length).toFixed(2);
   document.getElementById('stat-real').textContent  = nReal;
-  document.getElementById('stat-recon').textContent = nRecon;
+  document.getElementById('stat-recon').textContent = nRec;
   document.getElementById('stat-avg').textContent   = avgQ;
 
-  // Deshabilitar botón GitHub si no está configurado
-  if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
-    var btn = document.getElementById('btn-upload');
-    btn.disabled = true;
-    btn.title    = 'Configura GITHUB_TOKEN, GITHUB_OWNER y GITHUB_REPO en el código.';
-  }
+  /* Subida automática al terminar */
+  uploadToGitHub();
 }
 
 function buildCSV() {
-  var header = ['evaluator_id','image_index','image_file','image_group',
-                'ground_truth','is_repeat','perceived_type',
-                'quality_score','realism_score','color_score','timestamp'];
-
-  var rows = responses.map(function(r) {
-    return header.map(function(k) {
+  var h = ['evaluator_id','evaluator_experience','image_index','image_file','image_group',
+           'ground_truth','is_repeat','perceived_type','quality_score','realism_score','color_score','timestamp'];
+  var rows = responses.map(function(r){
+    return h.map(function(k){
       var v = String(r[k] !== undefined ? r[k] : '');
-      return (v.indexOf(',') >= 0 || v.indexOf('"') >= 0) ? '"' + v.replace(/"/g, '""') + '"' : v;
+      return (v.indexOf(',')>=0 || v.indexOf('"')>=0) ? '"'+v.replace(/"/g,'""')+'"' : v;
     }).join(',');
   });
-
-  return [header.join(',')].concat(rows).join('\n');
+  return [h.join(',')].concat(rows).join('\n');
 }
 
 function downloadCSV() {
-  var csv    = buildCSV();
-  var blob   = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  var url    = URL.createObjectURL(blob);
-  var a      = document.createElement('a');
-  var safeId = evaluatorId.replace(/[^a-zA-Z0-9_-]/g, '_');
-  a.href     = url;
-  a.download = 'survey_' + safeId + '_' + Date.now() + '.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  var blob = new Blob([buildCSV()], { type: 'text/csv;charset=utf-8;' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url;
+  a.download = 'survey_' + evaluatorId.replace(/[^a-zA-Z0-9_-]/g,'_') + '_' + Date.now() + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 
 function uploadToGitHub() {
-  var status = document.getElementById('upload-status');
-  var btn    = document.getElementById('btn-upload');
-  status.className   = 'upload-status';
-  status.textContent = '';
+  var status   = document.getElementById('upload-status');
+  var retryBtn = document.getElementById('btn-retry-upload');
+  var doneMsg  = document.getElementById('done-msg');
 
-  var csv    = buildCSV();
-  var safeId = evaluatorId.replace(/[^a-zA-Z0-9_-]/g, '_');
-  var fname  = 'survey_' + safeId + '_' + Date.now() + '.csv';
-  var path   = GITHUB_PATH + fname;
-  var url    = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + path;
+  status.className   = 'upload-status info';
+  status.textContent = '⏳ Enviando resultados…';
+  retryBtn.style.display = 'none';
 
-  // Codifica el CSV en base64
-  var b64 = btoa(unescape(encodeURIComponent(csv)));
+  if (!WORKER_URL) {
+    status.textContent  = '⚠ Worker no configurado. Descarga el CSV manualmente.';
+    status.className    = 'upload-status err';
+    doneMsg.textContent = 'Has completado la evaluación. Descarga el CSV y entrégaselo al investigador.';
+    return;
+  }
 
-  btn.disabled = true;
-  btn.textContent = 'Enviando...';
+  var fname   = 'results/survey_' + evaluatorId.replace(/[^a-zA-Z0-9_-]/g,'_') + '_' + Date.now() + '.csv';
+  var b64     = btoa(unescape(encodeURIComponent(buildCSV())));
 
-  fetch(url, {
-    method: 'PUT',
-    headers: {
-      'Authorization': 'token ' + GITHUB_TOKEN,
-      'Content-Type':  'application/json',
-      'Accept':        'application/vnd.github+json'
-    },
-    body: JSON.stringify({
-      message: 'Survey result: ' + fname,
-      content: b64,
-      branch:  GITHUB_BRANCH
-    })
+  fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ filename: fname, content: b64 })
   })
-  .then(function(res) {
-    if (res.status === 201) {
-      status.textContent = '\u2713 Archivo enviado correctamente a GitHub: ' + path;
-      status.className   = 'upload-status ok';
+  .then(function(res) { return res.json().then(function(d){ return { ok: res.ok, data: d }; }); })
+  .then(function(r) {
+    if (r.ok) {
+      doneMsg.textContent    = '¡Resultados guardados! Puedes cerrar esta página.';
+      status.textContent     = '✓ Guardado correctamente en ' + fname;
+      status.className       = 'upload-status ok';
+      retryBtn.style.display = 'none';
     } else {
-      return res.json().then(function(data) {
-        throw new Error(data.message || 'Error HTTP ' + res.status);
-      });
+      throw new Error(r.data.message || 'Error del servidor');
     }
   })
   .catch(function(err) {
-    status.textContent = '\u26a0 Error al enviar: ' + err.message;
-    status.className   = 'upload-status err';
-  })
-  .finally(function() {
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg> Enviar a GitHub';
+    doneMsg.textContent    = 'No se pudo guardar automáticamente. Descarga el CSV.';
+    status.textContent     = '⚠ Error: ' + err.message + '. Usa "Descargar CSV" como alternativa.';
+    status.className       = 'upload-status err';
+    retryBtn.style.display = 'flex';
   });
 }
 </script>
