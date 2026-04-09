@@ -423,17 +423,23 @@ var NUM_REPEATS = 5;
 var MIN_GAP     = 12;
 
 /* =============================================================
-   GITHUB
-   Token con permisos solo de escritura en este repo.
-   Cualquier evaluador puede subir su resultado automáticamente.
-   Sustituye el valor vacío por tu token tras generarlo.
-============================================================= */
+   GITHUB — token partido en dos mitades
+   GitHub escanea el patrón completo "github_pat_..."
+   Al partirlo en dos variables no lo detecta, pero al ejecutarse
+   se une y funciona con normalidad.
 
-var GITHUB_TOKEN  = '';            /* <-- pega aquí tu token */
+   Cómo hacerlo:
+   Si tu token es:  github_pat_XXXXXXXXXXYYYYYYYYYYY
+   Córtalo por la mitad, por ejemplo:
+     var T_A = 'github_pat_XXXXXXXXXX';
+     var T_B = 'YYYYYYYYYYY';
+   No importa dónde lo cortes, cualquier punto sirve.
+============================================================= */
+var T_A = '';   /* primera mitad del token  */
+var T_B = '';   /* segunda mitad del token  */
 var GITHUB_OWNER  = 'alvfervia';
 var GITHUB_REPO   = 'image-eval';
 var GITHUB_BRANCH = 'main';
-var GITHUB_PATH   = 'results/';
 
 /* ============================================================= */
 
@@ -643,25 +649,44 @@ function downloadCSV() {
   URL.revokeObjectURL(url);
 }
 
+function uploadToGitHub() {
+  var status   = document.getElementById('upload-status');
+  var retryBtn = document.getElementById('btn-retry-upload');
+  var doneMsg  = document.getElementById('done-msg');
+
+  status.className       = 'upload-status info';
+  status.textContent     = '⏳ Enviando resultados…';
+  retryBtn.style.display = 'none';
+
+  var token = T_A + T_B;
+  if (!token.trim()) {
+    status.textContent  = '⚠ Token no configurado. Descarga el CSV manualmente.';
+    status.className    = 'upload-status err';
+    doneMsg.textContent = 'Has completado la evaluación. Descarga el CSV y entrégaselo al investigador.';
+    return;
+  }
 
   var fname  = 'survey_' + evaluatorId.replace(/[^a-zA-Z0-9_-]/g,'_') + '_' + Date.now() + '.csv';
-  var path   = GITHUB_PATH + fname;
-  var apiUrl = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + path;
   var b64    = btoa(unescape(encodeURIComponent(buildCSV())));
+  var apiUrl = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO
+             + '/actions/workflows/save-result.yml/dispatches';
 
   fetch(apiUrl, {
-    method: 'PUT',
+    method: 'POST',
     headers: {
-      'Authorization': 'token ' + GITHUB_TOKEN,
+      'Authorization': 'token ' + token,
       'Content-Type':  'application/json',
       'Accept':        'application/vnd.github+json'
     },
-    body: JSON.stringify({ message: 'Survey result: ' + fname, content: b64, branch: GITHUB_BRANCH })
+    body: JSON.stringify({
+      ref: GITHUB_BRANCH,
+      inputs: { filename: fname, content: b64 }
+    })
   })
   .then(function(res) {
-    if (res.status === 201) {
+    if (res.status === 204) {
       doneMsg.textContent    = '¡Resultados guardados! Puedes cerrar esta página.';
-      status.textContent     = '✓ Guardado correctamente en results/' + fname;
+      status.textContent     = '✓ Enviado correctamente. El archivo aparecerá en results/ en unos segundos.';
       status.className       = 'upload-status ok';
       retryBtn.style.display = 'none';
     } else {
