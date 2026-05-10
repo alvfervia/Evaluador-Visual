@@ -263,12 +263,7 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Descargar CSV
     </button>
-    <button class="btn-primary" id="btn-retry-upload" onclick="uploadToGitHub()" style="display:none">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-      Reintentar envío
-    </button>
   </div>
-  <div class="upload-status" id="upload-status"></div>
 </section>
 
 <script>
@@ -432,40 +427,9 @@ var MODELOD2_IMAGES = [
   '001-008_9797_out.jpg' 
 ];
 
-/* =============================================================
-   CONFIGURACION DE REPETICIONES
-   =============================================================
-   NUM_REPEATS: cuántas imágenes se repetirán una vez (ej: 5)
-   MIN_GAP: distancia mínima (en posiciones) entre la primera
-            aparición de una imagen y su repetición.
-            Recomendado: al menos 10-15 para 60 imágenes.
-*/
 var NUM_REPEATS  = 5;
 var MIN_GAP      = 12;
 
-/* =============================================================
-   CONFIGURACION DE GITHUB (para envío automático del CSV)
-   =============================================================
-   Para activar el envío a GitHub necesitas:
-   1. Crear un repositorio en GitHub (puede ser privado).
-   2. Generar un Personal Access Token con permiso "repo":
-      GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens
-      Selecciona el repositorio y concede permisos de Contents (Read & Write).
-   3. Rellenar los campos de abajo.
-
-   IMPORTANTE: Si este archivo es público, NO pongas el token aquí directamente.
-   En su lugar usa una variable de entorno o un servicio intermediario.
-   Para uso en local o repositorio privado, rellenar aquí es suficiente.
-*/
-var Tr_A= 'github_pat_11BA4SHBQ0a7nZFbYB0ujp_';
-var Tr_B='tDnEJkpPGWRpclPoDWab6JUkhB0Ga9whgTDSAWoD0KyX6XV67EONrdJSUfr';
-var GITHUB_TOKEN  = Tr_A + Tr_B ;             // Tu Personal Access Token de GitHub
-var GITHUB_OWNER  = 'alvfervia';             // Tu usuario u organización (ej: 'maria-garcia')
-var GITHUB_REPO   = 'image-eval';             // Nombre del repositorio (ej: 'image-eval-results')
-var GITHUB_BRANCH = 'main';         // Rama donde guardar los CSVs
-var GITHUB_PATH   = 'results/';     // Carpeta dentro del repo (con / al final)
-
-/* ============================================================= */
 function changeExp(delta) {
   var inp = document.getElementById('evaluator-exp');
   var v   = parseInt(inp.value) || 0;
@@ -647,9 +611,9 @@ function showDone() {
   document.getElementById('stat-real').textContent  = nReal;
   document.getElementById('stat-recon').textContent = nRec;
   document.getElementById('stat-avg').textContent   = avgQ;
-
-  /* Subida automática al terminar */
-  uploadToGitHub();
+  
+  document.getElementById('done-msg').textContent =
+    'Descarga el fichero CSV y entrégaselo al examinador al finalizar la evaluación.';
 }
 
 function buildCSV() {
@@ -674,53 +638,7 @@ function downloadCSV() {
   URL.revokeObjectURL(url);
 }
 
-function uploadToGitHub() {
-  var status  = document.getElementById('upload-status');
-  var retryBtn = document.getElementById('btn-retry-upload');
-  var doneMsg = document.getElementById('done-msg');
 
-  status.className   = 'upload-status info';
-  status.textContent = '⏳ Enviando resultados al repositorio…';
-  retryBtn.style.display = 'none';
-
-  if (!GITHUB_TOKEN) {
-    status.textContent = '⚠ No hay token configurado. Descarga el CSV manualmente.';
-    status.className   = 'upload-status err';
-    doneMsg.textContent = 'Has completado la evaluación. Descarga el CSV y entrégaselo al investigador.';
-    return;
-  }
-
-  var fname = 'survey_' + evaluatorId.replace(/[^a-zA-Z0-9_-]/g,'_') + '_' + Date.now() + '.csv';
-  var path  = GITHUB_PATH + fname;
-  var apiUrl = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + path;
-  var b64   = btoa(unescape(encodeURIComponent(buildCSV())));
-
-  fetch(apiUrl, {
-    method: 'PUT',
-    headers: {
-      'Authorization': 'token ' + GITHUB_TOKEN,
-      'Content-Type':  'application/json',
-      'Accept':        'application/vnd.github+json'
-    },
-    body: JSON.stringify({ message: 'Survey result: ' + fname, content: b64, branch: GITHUB_BRANCH })
-  })
-  .then(function(res) {
-    if (res.status === 201) {
-      doneMsg.textContent     = '¡Resultados guardados! Puedes cerrar esta página.';
-      status.textContent      = '✓ Guardado correctamente en results/' + fname;
-      status.className        = 'upload-status ok';
-      retryBtn.style.display  = 'none';
-    } else {
-      return res.json().then(function(d){ throw new Error(d.message || 'HTTP ' + res.status); });
-    }
-  })
-  .catch(function(err) {
-    doneMsg.textContent    = 'No se pudo guardar automáticamente. Descarga el CSV y entrégaselo al investigador.';
-    status.textContent     = '⚠ Error al guardar: ' + err.message + '. Usa el botón "Descargar CSV" como alternativa.';
-    status.className       = 'upload-status err';
-    retryBtn.style.display = 'flex';
-  });
-}
 </script>
 </body>
 </html>
